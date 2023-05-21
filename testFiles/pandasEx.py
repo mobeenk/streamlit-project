@@ -2,7 +2,7 @@
 import pandas as pd
 from library import *
 # Read the CSV file into a Pandas DataFrame
-df = pd.read_csv('student.csv')
+df = pd.read_csv('../student.csv')
 
 # Save the column names into an array
 column_names = df.columns.values

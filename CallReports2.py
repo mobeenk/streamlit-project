@@ -2,20 +2,11 @@ import json
 import time
 from datetime import datetime, date
 from pathlib import Path
-
-from pandas import read_csv
 from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
-from streamlit.components.v1 import components
-
 from library import *
 from navbar import *
-
-
-class Person:
-    def __init__(self, name, title):
-        self.name = name
-        self.title = title
+from utility import *
 
 # Set page width to be wider than default
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
@@ -34,7 +25,7 @@ navmenu_selected = Navbar2(menu_list)
 
 @st.cache_data()
 def load_data():
-    data1 = pd.read_csv('student.csv')
+    data1 = pd.read_csv('pages/student.csv')
     return data1
 
 
@@ -76,7 +67,9 @@ def save_plan():
     # save into db
     pass
 
-
+staff_list = []
+if 'person_list' not in st.session_state:
+    st.session_state.person_list = []
 def call_report_page():
     with st.expander("Add new Call Report Record"):
         # with st.form(key='call_report', clear_on_submit=False):
@@ -85,11 +78,11 @@ def call_report_page():
         st.markdown(f"<h3>Report Details</h3>", unsafe_allow_html=True)
 
         r1c1, r1c2 = st.columns(2)
-        report_date = r1c1.date_input("Event Date", key="rep_date", min_value=datetime.today())
-        from_department = r1c2.text_input("From Department :", value='')
+        report_date = r1c1.date_input("Event Date", key="rep_date", min_value=datetime.today(),value=datetime.now())
+        from_department = r1c2.text_input("From Department :", value='fffff')
 
         st.markdown(f"<h3>Client Details</h3>", unsafe_allow_html=True)
-        client_name = st.text_input("Client's Name", value='')
+        client_name = st.text_input("Client's Name", value='client name')
 
         r2c1, r2c2 = st.columns(2)
         client_type = r2c1.radio(
@@ -101,11 +94,11 @@ def call_report_page():
             horizontal=True,
         )
         # r2c1.radio("Client Type", ("New Client", "Existing Client"))
-        referenced_by = r2c2.text_input("Prospect Referenced By :", value='')
+        referenced_by = r2c2.text_input("Prospect Referenced By :", value='ref by')
 
         st.markdown(f"<h3>Call Details</h3>", unsafe_allow_html=True)
         call_date_time = st.date_input("Call Date", key="call_datetime", min_value=datetime.today())
-        the_place = st.text_input("Place", value='')
+        the_place = st.text_input("Place", value='Riyad')
         # Create a two-column layout
         col1, col2 = st.columns(2)
         # Column 1
@@ -121,10 +114,10 @@ def call_report_page():
                 # Read the uploaded CSV file
                 df = pd.read_csv(uploaded_file)
                 st.dataframe(df)
-                person_list = []
+
                 for index, row in df.iterrows():
                     person = Person(row['name'], row['title'])
-                    person_list.append(person)
+                    st.session_state.person_list.append(person)
 
         # Column 2
         with col2:
@@ -137,8 +130,11 @@ def call_report_page():
             if uploaded_file is not None:
                 # Read the uploaded CSV file
                 df = pd.read_csv(uploaded_file)
-                # Display the DataFrame in a grid
                 st.dataframe(df)
+
+                for index, row in df.iterrows():
+                    staff = Person(row['name'], row['title'])
+                    staff_list.append(staff)
 
         st.markdown(f"<h3>Agenda Details</h3>", unsafe_allow_html=True)
         call_objective = st.text_area("Objective of the call", height=100, value="call pbjective")
@@ -147,20 +143,39 @@ def call_report_page():
 
         submit_report = st.button(label='Submit')
         if submit_report:
-            json_obj = report_plan_json(None, None, st.session_state.calledOnList, st.session_state.callingList,
+            # st.write(st.session_state.person_list)
+            json_obj = report_plan_json(
+                str(today),
+                str(report_date),
+                from_department,
+                client_name,
+                client_type,
+                referenced_by,
+                str(call_date_time),
+                the_place,
+                st.session_state.person_list, staff_list,
                                         call_objective, points_of_discusstion, actionable_items)
             st.write(json_obj)
-
+            st.dataframe(json_to_dataframe(json_obj))
             # Create an empty list to store the employees
 
 
-def report_plan_json(staff_name, staff_title, calledOnList, callingList, call_objective, points_of_discusstion,
-                     actionable_items):
+def report_plan_json(
+    today, report_date, from_department, client_name, client_type, referenced_by, call_date_time, the_place
+        , calledOnList, callingList, call_objective, points_of_discusstion,  actionable_items):
+    called_list = [person_to_dict(person) for person in calledOnList]
+    calling_list = [person_to_dict(person) for person in callingList]
     data = {
-        "staff_name": staff_name,
-        "staff_title": staff_title,
-        "called_list": calledOnList,
-        "calling_list": callingList,
+        "today": today,
+        "report_date": report_date,
+        "from_department": from_department,
+        "client_name": client_name,
+        "client_type": client_type,
+        "referenced_by": referenced_by,
+        "call_date_time": call_date_time,
+        "the_place": the_place,
+        "called_list": called_list,
+        "calling_list": calling_list,
         "call_objective": call_objective,
         "points_of_discusstion": points_of_discusstion,
         "actionable_items": actionable_items
@@ -173,83 +188,35 @@ def save_report_plan(reportPlanObject):
     pass
 
 
-def show_grid():
-#     cellRenderer = JsCode(
-#         """
-#         function(params){
-#           return
-#            "<a href='http://google.com/'>link </a>";
-#         }
-#
-# """
-#     )
-
-    # callRenderer = JsCode(
-    #     """
-    #       function(params) {
-    #                  return 'Value is <b>' + params.value + '</b>';
-    #             }
-    #     """
-    # )
-
-
-    # link_jscode = JsCode("""
-    #  function(params) {
-    #     var element = document.createElement("span");
-    #     var linkElement = document.createElement("a");
-    #     var linkText = document.createTextNode(params.value);
-    #     link_url = params.value;
-    #     linkElement.appendChild(linkText);
-    #     linkText.title = params.value;
-    #     linkElement.href = link_url;
-    #     linkElement.target = "_blank";
-    #     element.appendChild(linkElement);
-    #     return element;
-    #  };
-    #  """)
-    image_nation = JsCode(
-        """
-            function (params) {
-                var htmlContent = '<h1>Hello, World!</h1><p>This is a dynamically rendered HTML content.</p>';
-                return htmlContent;
-            }
-        """
-    )
-    gd = GridOptionsBuilder.from_dataframe(load_data())
-    gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-    # gd.configure_column("id"
-    #                     , cellRenderer=image_nation
-    #                     , cellStyle={'color': 'red'}
-    #                     , unsafe_allow_html=True)
-    #
-    gd.configure_column(
-        "id", "sdsddsds",
-        cellRenderer=JsCode("""
-            class UrlCellRenderer {
-              init(params) {
+def show_grid(url, df):
+    injected_javascript = f"""
+        class UrlCellRenderer {{
+            init(params) {{
                 this.eGui = document.createElement('a');
                 this.eGui.innerText = params.value;
-                this.eGui.setAttribute("href", "http://localhost:8502/sub1?q="+params.value);
+                this.eGui.setAttribute("href", "{url}" + params.value);
                 this.eGui.setAttribute('style', "text-decoration:underline");
                 this.eGui.setAttribute('style', "color:red");
                 this.eGui.setAttribute('target', "_blank");
-              }
-              getGui() {
+            }}
+            getGui() {{
                 return this.eGui;
-              }
-            }
-        """)
+            }}
+        }}
+    """
+    gd = GridOptionsBuilder.from_dataframe(load_data())
+    gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+    gd.configure_column(
+        "id", "Id",
+        cellRenderer=JsCode(injected_javascript)
     )
-    # gd.configure_column("name", headerName="name", cellRenderer=JsCode(
-    #     '''function(params) {return '<a href="https://drive.google.com/file/d/' + params.value + '/view" target="_blank">' + params.value + '</a>'}'''),
-    #                     width=300)
     gd.configure_side_bar(filters_panel=True)
     # gd.configure_column("name", width=30)
     # gd.configure_columns(column_names, width=100)
     # gd.configure_default_column(editable=True, groupable=True)
     # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
     gdOptions = gd.build()
-    df = load_data()
+    # df = load_data()
     AgGrid(df
            , gridOptions=gdOptions
            , allow_unsafe_jscode=True
@@ -258,7 +225,7 @@ def show_grid():
            , enable_quicksearch=True
            , reload_data=True
            , fit_columns_on_grid_load=True
-    )
+           )
 
 
 # Nav bar on selection
@@ -266,35 +233,12 @@ if navmenu_selected == 'Call Plans':
     call_plan_page()
     grid_title = "My Call Plans"
     st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-    show_grid()
+    show_grid("http://localhost:8502/view_plan?q=", load_data())
     # st.markdown('<h2 style="color:red;"">Home</h2>', unsafe_allow_html=True)
 if navmenu_selected == 'Call Reports':
     call_report_page()
-    grid_title = "My Call Report"
+    grid_title = "My Calls Reports"
     st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-    show_grid()
+    show_grid("http://localhost:8502/view_report?q=", load_data())
     # AgGrid(load_data(),default)
 
-
-st.markdown(f"<h3>Agenda Details</h3>")
-# components.html("<h1>ddsdsdds</h2>")
-
-# op_menu = get_financial_trans_type_desc()
-# selected_value22 = st.selectbox('Select an option', list(op_menu.keys()))
-# value22 = op_menu[selected_value22]
-
-
-# Define a class for the object
-
-# Create a sample DataFrame
-# df = pd.read_csv("template.csv")
-# Convert DataFrame to list of objects
-
-
-# Print the list of objects
-# for person in person_list:
-
-
-# for person in person_list:
-#     print(person.name, person.title)
-# st.write(person.name)

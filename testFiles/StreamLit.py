@@ -29,13 +29,13 @@ def get_financial_trans_type_desc():
 
 @st.cache_data()
 def load_data():
-    data1 = pd.read_csv('student.csv')
+    data1 = pd.read_csv('../student.csv')
     return data1
 
 
 def trx_comp():
     # Read the CSV file into a Pandas DataFrame
-    df = pd.read_csv('student.csv')
+    df = pd.read_csv('../student.csv')
     # Save the column names into an array
     column_names = df.columns.values
 
@@ -131,7 +131,7 @@ def trx_comp():
     st.download_button(
         label="Download data as CSV",
         data=csv,
-        file_name='student.csv',
+        file_name='../student.csv',
         mime='text/csv',
     )
 

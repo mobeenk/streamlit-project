@@ -6,7 +6,7 @@ con = duckdb.connect()
 
 # create a pandas dataframe with some data
 # data = {'id': [1, 2, 3], 'name': ['Alice', 'Bob', 'Charlie']}
-csv_data = pd.read_csv('student.csv')
+csv_data = pd.read_csv('../student.csv')
 df = pd.DataFrame(csv_data)
 
 # write the dataframe to the database
