@@ -18,7 +18,7 @@ class Person:
         self.title = title
 
 # Set page width to be wider than default
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 # Hide the hamburger icon
 hide_menu_style = """
     <style>
@@ -229,8 +229,9 @@ def show_grid():
               init(params) {
                 this.eGui = document.createElement('a');
                 this.eGui.innerText = params.value;
-                this.eGui.setAttribute("href", "https://www.google.com/search?q="+params.value);
+                this.eGui.setAttribute("href", "http://localhost:8502/sub1?q="+params.value);
                 this.eGui.setAttribute('style', "text-decoration:underline");
+                this.eGui.setAttribute('style', "color:red");
                 this.eGui.setAttribute('target', "_blank");
               }
               getGui() {
