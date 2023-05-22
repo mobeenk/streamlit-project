@@ -23,9 +23,9 @@ menu_list = ["Call Plans", "Call Reports"]
 navmenu_selected = Navbar2(menu_list)
 
 
-@st.cache_data()
-def load_data():
-    data1 = pd.read_csv('pages/student.csv')
+# @st.cache_data()
+def load_data(file):
+    data1 = pd.read_csv(file)
     return data1
 
 
@@ -43,7 +43,7 @@ def call_plan_page():
             # Display the date in the form header
             st.markdown(f"<h3>Request Date - {today}</h3>", unsafe_allow_html=True)
             RM_list = get_RMs_list()
-            selected_cr_dr_id = st.selectbox('Select RM', RM_list)
+            selected_cr_dr_id = st.selectbox('Select RM 🙎‍♂', RM_list)
             r1c1, r1c2 = st.columns(2)
             client_name = r1c1.text_input("Client Name:", value='')
             client_cif = r1c2.text_input("Client CIF :", value='')
@@ -75,7 +75,7 @@ def call_report_page():
         # with st.form(key='call_report', clear_on_submit=False):
         # Get today's date
         today = date.today().strftime("%Y-%m-%d")
-        st.markdown(f"<h3>Report Details</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3>Report Details 📋</h3>", unsafe_allow_html=True)
 
         r1c1, r1c2 = st.columns(2)
         report_date = r1c1.date_input("Event Date", key="rep_date", min_value=datetime.today(),value=datetime.now())
@@ -96,7 +96,7 @@ def call_report_page():
         # r2c1.radio("Client Type", ("New Client", "Existing Client"))
         referenced_by = r2c2.text_input("Prospect Referenced By :", value='ref by')
 
-        st.markdown(f"<h3>Call Details</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3>Call Details 📞</h3>", unsafe_allow_html=True)
         call_date_time = st.date_input("Call Date", key="call_datetime", min_value=datetime.today())
         the_place = st.text_input("Place", value='Riyad')
         # Create a two-column layout
@@ -104,8 +104,9 @@ def call_report_page():
         # Column 1
         with col1:
             st.header("Called On List")
+            # st.markdown("<span>👉</span>", unsafe_allow_html=True)
             st.download_button(
-                "Clients Template 📝", Path("student.csv").read_text(), "student.csv"
+                "👉 Clients Template 📝", Path("student.csv").read_text(), "student.csv"
             )
             # upload the list
             uploaded_file = st.file_uploader("Upload a CSV file for called on List", type="csv", key="fupload1")
@@ -136,7 +137,7 @@ def call_report_page():
                     staff = Person(row['name'], row['title'])
                     staff_list.append(staff)
 
-        st.markdown(f"<h3>Agenda Details</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3>Agenda Details 📒</h3>", unsafe_allow_html=True)
         call_objective = st.text_area("Objective of the call", height=100, value="call pbjective")
         points_of_discusstion = st.text_area("Points of Discussion", height=100, value="points of discusion")
         actionable_items = st.text_area("Actionable Items", height=100, value="acional items")
@@ -204,7 +205,7 @@ def show_grid(url, df):
             }}
         }}
     """
-    gd = GridOptionsBuilder.from_dataframe(load_data())
+    gd = GridOptionsBuilder.from_dataframe( df )
     gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
     gd.configure_column(
         "id", "Id",
@@ -233,12 +234,31 @@ if navmenu_selected == 'Call Plans':
     call_plan_page()
     grid_title = "My Call Plans"
     st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-    show_grid("http://localhost:8502/view_plan?q=", load_data())
+    show_grid("http://localhost:8502/view_plan?q=", load_data('pages/student.csv') )
     # st.markdown('<h2 style="color:red;"">Home</h2>', unsafe_allow_html=True)
 if navmenu_selected == 'Call Reports':
     call_report_page()
     grid_title = "My Calls Reports"
     st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-    show_grid("http://localhost:8502/view_report?q=", load_data())
+
+    start_date = ""
+    end_date =""
+    date_range = st.date_input("Select date range", value=(date.today(), date.today()))
+    st.write(date_range[0])
+    st.write(date_range[1])
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input('Date From')
+    with col2:
+        end_date = st.date_input('To')
+
+    load_btn = st.button("Load")
+    if load_btn:
+        df = load_data('pages/callreports.csv')
+        df['report_date'] = pd.to_datetime(df['report_date'])
+        df = df.query('@start_date <= report_date <= @end_date')
+    else:
+        df = load_data('pages/callreports.csv')
+    show_grid("http://localhost:8502/view_report?q=", df)
     # AgGrid(load_data(),default)
 
