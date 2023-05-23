@@ -74,7 +74,7 @@ html_table_2 += "</div>"
 
 # Display the HTML tables
 # st.write(html_table_1 + html_table_2, unsafe_allow_html=True)
-png_file = Path("saib.png")
+png_file = Path("images/saib.png")
 bin_str = get_base64_of_bin_file(png_file)
 
 html_markdown2 = f"""
