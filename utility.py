@@ -1,12 +1,13 @@
+import base64
 import json
-
 import pandas as pd
-
-
+import streamlit as st
 class Person:
-    def __init__(self, name, title):
+    def __init__(self, name, title, department, phone):
         self.name = name
         self.title = title
+        self.department = department
+        self.phone = phone
 
 
 def person_to_dict(person):
@@ -21,7 +22,9 @@ def person_to_dict(person):
        """
     return {
         "name": person.name,
-        "title": person.title
+        "title": person.title,
+        "department": person.department,
+        "phone": person.phone
     }
 def json_to_dataframe(json_data):
     """
@@ -38,3 +41,11 @@ def json_to_dataframe(json_data):
     # Convert the dictionary to a DataFrame
     df = pd.DataFrame(data_dict)
     return df
+
+@st.cache_resource()
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+

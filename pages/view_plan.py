@@ -5,7 +5,7 @@ st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
 qid = st.experimental_get_query_params()
 extracted_value = int(qid['q'][0])
-st.write("<h1>Schedule Details for id #{}</h1>".format(extracted_value), unsafe_allow_html=True)
+# st.write("<h1>Schedule Details for id #{}</h1>".format(extracted_value), unsafe_allow_html=True)
 
 df = pd.read_csv("student.csv")
 
@@ -51,6 +51,7 @@ html_markdown = f"""
     .field-value {{
       margin-left: 10px;
       color: #C09C20; /* Dark yellow color */
+        word-wrap: break-word;
     }}
       /* Add hover effect */
     .field-value:hover {{

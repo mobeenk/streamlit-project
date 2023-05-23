@@ -1,31 +1,81 @@
+import sys
+from pathlib import Path
+
+from utility import *
 import streamlit as st
 import pandas as pd
+
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
 qid = st.experimental_get_query_params()
 extracted_value = int(qid['q'][0])
-st.write("<h1>Report Details for id #{}</h1>".format(extracted_value), unsafe_allow_html=True)
+# st.write("<h1>Report Details for id #{}</h1>".format(extracted_value), unsafe_allow_html=True)
 
 df = pd.read_csv("pages/callreports.csv")
 
 record = df.query(f"id == {extracted_value}")
 # df2 = df[df['id'] == '3']
 
+def getStaffList():
+    person_list_1 = [
+        Person("John Doe", "Manager","MIS","123123123"),
+        Person("Jane Smith", "Engineer","MIS","123123123"),
+        Person("Mike Johnson", "Analyst","MIS","123123123")
+    ]
+    return person_list_1
+def getClientsList():
+    person_list_2 = [
+        Person("Alice Johnson", "Designer","MIS","123123123"),
+        Person("Mark Davis", "Developer","MIS","123123123"),
+        Person("Emily Brown", "Project Manager","MIS","123123123")
+    ]
+    return person_list_2
 
-# Report content variables
-report_date = "May 22, 2023"
-from_department = "Marketing Department"
-client_name = "John Doe"
-client_type = "Premium"
-referenced_by = "Jane Smith"
-call_date_time = "May 21, 2023 10:00 AM"
-the_place = "Conference Room"
-called_list = "Person A, Person B, Person C"
-calling_list = "Person X, Person Y, Person Z"
-call_objective = "Discuss new marketing campaign"
-points_of_discussion = "Budget allocation, target audience, creative strategy"
-actionable_items = "Assign tasks, set deadlines"
+
+
+# Generate HTML tables
+html_table_1 = "<div style='display: inline-block; text-align: left; color:black; margin-top:20px;'>"
+html_table_1 += "<table>"
+html_table_1 += "<tr>" \
+                    "<th class='th-style'>Name</th>" \
+                    "<th class='th-style'>Title</th>" \
+                    "<th class='th-style'>Department</th>" \
+                    "<th class='th-style'>Phone</th>" \
+                "</tr>"
+for person in getStaffList():
+    html_table_1 += f"<tr>" \
+                        f"<td class='td-stylex'>{person.name}</td>" \
+                        f"<td class='td-stylex'>{person.title}</td>" \
+                        f"<td class='td-stylex'>{person.department}</td>" \
+                        f"<td class='td-stylex'>{person.phone}</td>" \
+                    f"</tr>"
+html_table_1 += "</table>"
+html_table_1 += "</div>"
+
+html_table_2 = "<div style='display: inline-block; text-align: left; color:black;margin-top:2px;'>"
+
+html_table_2 += "<table>"
+html_table_2 += "<tr>" \
+                    "<th class='th-style'>Name</th>" \
+                    "<th class='th-style'>Title</th>" \
+                    "<th class='th-style'>Department</th>" \
+                    "<th class='th-style'>Phone</th>" \
+                "</tr>"
+for person in getClientsList():
+    html_table_2 += f"<tr>" \
+                        f"<td class='td-stylex'>{person.name}</td>" \
+                        f"<td class='td-stylex'>{person.title}</td>" \
+                        f"<td class='td-stylex'>{person.department}</td>" \
+                        f"<td class='td-stylex'>{person.phone}</td>" \
+                    f"</tr>"
+html_table_2 += "</table>"
+html_table_2 += "</div>"
+
+# Display the HTML tables
+# st.write(html_table_1 + html_table_2, unsafe_allow_html=True)
+png_file = Path("saib.png")
+bin_str = get_base64_of_bin_file(png_file)
 
 html_markdown2 = f"""
 <!DOCTYPE html>
@@ -33,11 +83,34 @@ html_markdown2 = f"""
 <head>
   <style>
     /* Define the report container */
+    td,th{{border: 1px solid black !important;}}
     .report {{
-      border: 1px solid #ccc;
+      border: 1px solid black !important;
       padding: 20px;
       width: 1000px;
       margin: 0 auto;
+    }}
+    .report:after {{
+      border: 1px solid black !important;
+      padding: 20px;
+      width: 1000px;
+      margin: 0 auto;
+      content: "";
+      background-image: url("data:image/png;base64,{bin_str}");
+      background-size: 70%;
+      background-repeat: no-repeat;
+      background-position: center center;
+      opacity: 0.1;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      position: absolute;
+      z-index: 10;  
+    }}
+    .th-style {{
+        color: #C09C20;
+        font-style: italic;
     }}
 
     /* Define the report header style */
@@ -59,19 +132,21 @@ html_markdown2 = f"""
     /* Define the field label style */
     .field-label {{
       font-weight: bold;
+      color: black;
     }}
 
     /* Define the field value style */
     .field-value {{
       margin-left: 10px;
-      color: #C09C20; /* Dark yellow color */
+      color: black; /* Dark yellow color */
+      word-wrap: break-word;
     }}
 
     /* Add hover effect */
     .field-value:hover {{
-      animation: shine 1s forwards;
-      border-radius: 5px; /* Add border radius */
-      padding: 5px;
+     /*  animation: shine 1s forwards;
+      border-radius: 5px; Add border radius 
+      padding: 5px; */
     }}
 
     @keyframes shine {{
@@ -80,7 +155,7 @@ html_markdown2 = f"""
       }}
       50% {{
         background-color: #C09C20;
-        color: white;
+        color: black;
       }}
       100% {{
         background-color: transparent;
@@ -112,7 +187,7 @@ html_markdown2 = f"""
   </style>
 </head>
 <body>
-  <div class="report">
+  <div class="report" style="background: radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);;border-radius:10px; box-shadow: 0 8px 6px -6px black;">
     <div class="report-header">Call Report View</div>
     <div class="report-field">
       <span class="field-label">Today:</span>
@@ -141,30 +216,29 @@ html_markdown2 = f"""
     <div class="report-field">
       <span class="field-label">Call Date/Time:</span>
       <span class="field-value">{record.iat[0, 6]}</span>
-    </div>
     <div class="report-field">
       <span class="field-label">The Place:</span>
       <span class="field-value">{record.iat[0, 7]}</span>
     </div>
     <div class="report-field">
       <span class="field-label">Called List:</span>
-      <span class="field-value">{record.iat[0, 0]}</span>
+      <div class="field-value">{html_table_1}</div>
     </div>
     <div class="report-field">
       <span class="field-label">Calling List:</span>
-      <span class="field-value">{record.iat[0, 0]}</span>
+      <div class="field-value">{html_table_2}</div>
     </div>
     <div class="report-field">
       <span class="field-label">Call Objective:</span>
-      <span class="field-value">{record.iat[0, 8]}</span>
+      <span class="field-value">{record.iat[0, 10]}</span>
     </div>
     <div class="report-field">
       <span class="field-label">Points of Discussion:</span>
-      <span class="field-value">{record.iat[0, 9]}</span>
+      <span class="field-value">{record.iat[0, 11]}</span>
     </div>
     <div class="report-field">
       <span class="field-label">Actionable Items:</span>
-      <span class="field-value">{record.iat[0, 10]}</span>
+      <span class="field-value">{record.iat[0, 12]}</span>
     </div>
   </div>
 </body>

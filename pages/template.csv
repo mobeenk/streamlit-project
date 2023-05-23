@@ -1,36 +1,12 @@
-name,title
-John Deo,Four
-Max Ruin,Three
-Arnold,Three
-Krish Star,Four
-John Mike,Four
-Alex John,Four
-My John Rob,Fifth
-Asruid,Five
-Tes Qry,Six
-Big John,Four
-Ronald,Six
-Recky,Six
-Kty,Seven
-Bigy,Seven
-Tade Row,Four
-Gimmy,Four
-Tumyu,Six
-Honny,Five
-Tinny,Nine
-Jackly,Nine
-Babby John,Four
-Reggid,Seven
-Herod,Eight
-Tiddy Now,Seven
-Giff Tow,Seven
-Crelea,Seven
-Big Nose,Three
-Rojj Base,Seven
-Tess Played,Seven
-Reppy Red,Six
-Marry Toeey,Four
-Binn Rott,Seven
-Kenn Rein,Six
-Gain Toe,Seven
-Rows Noump,Six
+name,title,department,phone
+John Deo,CEO,MIS,124
+Max Ruin,Developer,IT,2414
+Arnold,Head ,Finance,421
+Krish Star,Four,Finance,412
+John Mike,PV,Finance,214
+Alex John,VC,Finance,12
+My John Rob,Boss,Finance,421
+Asruid,Manager,Finance,214
+Tes Qry,Six,Finance,421
+Big John,Emp,Finance,21
+Ronald,Boss,Finance,21
