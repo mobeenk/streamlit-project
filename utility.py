@@ -2,6 +2,7 @@ import base64
 import json
 import pandas as pd
 import streamlit as st
+from jwt_generator  import  *
 class Person:
     def __init__(self, name, title, department, phone):
         self.name = name
@@ -49,5 +50,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 
-def get_user(userId):
-    return "Moubien"
+def get_user_claims(token):
+    user_id = read_jwt_token(token)[0]
+    token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
+    return user_id, token_expiry_date

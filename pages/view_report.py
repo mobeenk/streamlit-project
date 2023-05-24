@@ -9,8 +9,8 @@ import pandas as pd
 general_settings()
 
 # Use Font Awesome icons in your Streamlit app
-st.markdown('<i class="fas fa-star"></i> Star', unsafe_allow_html=True)
-st.markdown('<i class="fas fa-thumbs-up"></i> Like', unsafe_allow_html=True)
+st.markdown('<i class="fas fa-star"></i>', unsafe_allow_html=True)
+
 
 qid = st.experimental_get_query_params()
 extracted_value = int(qid['q'][0])

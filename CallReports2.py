@@ -11,10 +11,10 @@ from popup import *
 general_settings()
 #get user info
 qid = st.experimental_get_query_params()
-q_userId = int(qid['user'][0])
-userId = get_user(q_userId)
+q_userId = (qid['user'][0])
+userId, token_expiry = get_user_claims(q_userId)
 
-components.html(page_head(userId))
+components.html(page_head(userId, token_expiry))
 # st.markdown(page_head(userId), unsafe_allow_html=True)
 # st.markdown(f"<p>Welcome, {userId}</p>",unsafe_allow_html=True)
 
@@ -25,7 +25,7 @@ hide_menu_style = """
     #MainMenu {visibility: hidden;}
      #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cm.st-cg.st-ch.st-ci > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div
     {margin-top:33px;}
-    #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-bx.st-ag.st-ah.st-ai.st-aj.st-by.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-ar.st-as.st-b6.st-b5.st-b3.st-c5.st-c6.st-c7.st-b4.st-c8.st-c9.st-ca.st-cb.st-cc > div > p
+    #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-by.st-ag.st-ah.st-ai.st-aj.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-c5.st-ar.st-as.st-b6.st-b5.st-b3.st-c6.st-c7.st-c8.st-b4.st-c9.st-ca.st-cb.st-cc.st-cd > div > p
     { font-size: 22px !important; font-weight: bold !important; }
     #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div
     { margin-top:-60px; }

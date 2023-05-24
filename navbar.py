@@ -30,12 +30,13 @@ def Navbar3(menu_list):
     )
     return selected3
 
-def page_head(username):
+def page_head(username, token_expiry):
 
     html_css_page = f"""
     <!DOCTYPE html>
     <html>
     <head>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
       <script>
             document.addEventListener('DOMContentLoaded', function() {{
             function doDate()
@@ -75,6 +76,14 @@ def page_head(username):
             font-weight: bold;
             padding: 15px;
         }}
+        .bg {{
+            background: rgb(240,240,207);
+            background: linear-gradient(221deg, rgba(240,240,207,1) 0%, rgba(255,255,255,1) 100%);
+            index:-5;
+            margin:10px; 
+            border-radius: 15px;
+            box-shadow: 7px 2px 9px -7px rgba(0,0,0,0.75);
+        }}
       </style>
     </head>
     <body>
@@ -82,9 +91,10 @@ def page_head(username):
            <div class="flex-items" >
              <img class="my-image" src="https://www.saib.com.sa/sites/default/files/logo.png" alt="Logo">
            </div>
-           <div class="flex-items flex-items-text">Welcome, 
+           <div class="flex-items flex-items-text bg">Welcome, 
                 <span style="color: #C09C20;">{username}</span>
                 <div id="todaysDate"></div>
+                <div><i class="fas fa-star"></i>{token_expiry}</div>
            </div>
         </div>
     </body>
