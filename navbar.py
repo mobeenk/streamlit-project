@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import streamlit as st
 from streamlit_option_menu import option_menu
 
@@ -32,10 +34,14 @@ def Navbar3(menu_list):
 
 def page_head(username, token_expiry):
 
+    int_timestamp = int(token_expiry.timestamp())*1000 # 1685015047 * 1000 to milisecond
     html_css_page = f"""
     <!DOCTYPE html>
     <html>
     <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
       <script>
             document.addEventListener('DOMContentLoaded', function() {{
@@ -54,6 +60,33 @@ def page_head(username, token_expiry):
                 }}
                 setInterval(doDate, 1000);
             }});
+            var countDownDate = {int_timestamp};
+            // Update the count down every 1 second
+            var x = setInterval(function() {{
+              // Get today's date and time
+              var now = new Date().getTime();
+              // Find the distance between now and the count down date
+              var distance = countDownDate - now;
+
+              var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+              // Display the result in the element with id="demo"
+              document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+              + minutes + "m " + seconds + "s ";
+            
+              // If the count down is finished, write some text
+              if (distance < 0) {{
+                clearInterval(x);
+                document.getElementById("demo").innerHTML = "EXPIRED";
+                document.getElementById("demo").style.color = 'red';
+              }}
+              else {{
+                document.getElementById("demo").style.color = 'green';
+              }}
+            }}, 1000);
       </script>
       <style>
         .flex-container {{
@@ -72,9 +105,10 @@ def page_head(username, token_expiry):
         }}
         .flex-items-text {{
             color: black;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             padding: 15px;
+            font-family:'Barlow Condensed', sans-serif;
         }}
         .bg {{
             background: rgb(240,240,207);
@@ -94,10 +128,74 @@ def page_head(username, token_expiry):
            <div class="flex-items flex-items-text bg">Welcome, 
                 <span style="color: #C09C20;">{username}</span>
                 <div id="todaysDate"></div>
-                <div><i class="fas fa-star"></i>{token_expiry}</div>
+                <div><i class="fas fa-star"></i>
+                    Session Expire in: <span id="demo"></span>
+                </div>
            </div>
         </div>
     </body>
     </html>
     """
     return html_css_page
+
+
+def notfound_page(title):
+    html_css_page = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>401 Unauthorized</title>
+      <style>
+        body {{
+          font-family: Arial, sans-serif;
+          margin: 0;
+        }}
+
+        .container {{
+          margin-top: -50px;
+          height: 80vh;
+          background-color: #ffffcc;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+        }}
+
+        h1 {{
+          font-size: 36px;
+          color: red;
+          margin-bottom: 20px;
+        }}
+
+        p {{
+          font-size: 20px;
+          color: #777;
+          margin-bottom: 20px;
+        }}
+
+        .support-link {{
+          display: inline-block;
+          color: white !important;
+          background-color:  #C09C20;;
+          padding: 10px 20px;
+          border-radius: 4px;
+          text-decoration: none;
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>{title}</h1>
+        <p>You are not authorized to access this page.</p>
+        <p>Please contact support for assistance.</p>
+        <a href="mailto:support@example.com" class="support-link">Contact Support</a>
+      </div>
+    </body>
+    </html>
+    """
+
+    return html_css_page
+

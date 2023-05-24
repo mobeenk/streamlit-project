@@ -40,6 +40,18 @@ def read_jwt_token(jwt_token):
         return None, None
 
 
+def is_valid_jwt(token, secret_key):
+    try:
+        jwt.decode(token, secret_key, algorithms=['HS256'])
+        return True
+    except jwt.ExpiredSignatureError:
+        print("JWT token has expired.")
+    except jwt.InvalidTokenError:
+        print("Invalid JWT token.")
+
+    return False
+
+
 new_token = generate_jwt_token(5)
 print(new_token)
 print(read_jwt_token(new_token))

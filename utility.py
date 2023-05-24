@@ -51,6 +51,10 @@ def get_base64_of_bin_file(bin_file):
 
 
 def get_user_claims(token):
-    user_id = read_jwt_token(token)[0]
-    token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
-    return user_id, token_expiry_date
+    isValid = is_valid_jwt(token, "your_secret_key")
+    if isValid == True:
+        user_id = read_jwt_token(token)[0]
+        # token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
+        return user_id, read_jwt_token(token)[1]
+    else:
+        return None, None
