@@ -7,7 +7,7 @@ qid = st.experimental_get_query_params()
 extracted_value = int(qid['q'][0])
 # st.write("<h1>Schedule Details for id #{}</h1>".format(extracted_value), unsafe_allow_html=True)
 
-df = pd.read_csv("student.csv")
+df = pd.read_csv("pages/plans.csv")
 
 record = df.query(f"id == {extracted_value}")
 # df2 = df[df['id'] == '3']

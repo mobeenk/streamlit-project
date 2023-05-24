@@ -1,12 +1,16 @@
 import sys
 from pathlib import Path
-
+from common import *
 from utility import *
 import streamlit as st
 import pandas as pd
 
 
-st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+general_settings()
+
+# Use Font Awesome icons in your Streamlit app
+st.markdown('<i class="fas fa-star"></i> Star', unsafe_allow_html=True)
+st.markdown('<i class="fas fa-thumbs-up"></i> Like', unsafe_allow_html=True)
 
 qid = st.experimental_get_query_params()
 extracted_value = int(qid['q'][0])
@@ -19,9 +23,9 @@ record = df.query(f"id == {extracted_value}")
 
 def getStaffList():
     person_list_1 = [
-        Person("John Doe", "Manager","MIS","123123123"),
-        Person("Jane Smith", "Engineer","MIS","123123123"),
-        Person("Mike Johnson", "Analyst","MIS","123123123")
+        Person("John Doe", "Manager", "MIS", "123123123"),
+        Person("Jane Smith", "Engineer", "MIS", "123123123"),
+        Person("Mike Johnson", "Analyst", "MIS" ,"123123123")
     ]
     return person_list_1
 def getClientsList():

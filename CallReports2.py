@@ -4,19 +4,36 @@ from pathlib import Path
 from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from navbar import *
+from common import *
 from utility import *
 from popup import *
 
-# Set page width to be wider than default
-st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+general_settings()
+#get user info
+qid = st.experimental_get_query_params()
+q_userId = int(qid['user'][0])
+userId = get_user(q_userId)
+
+components.html(page_head(userId))
+# st.markdown(page_head(userId), unsafe_allow_html=True)
+# st.markdown(f"<p>Welcome, {userId}</p>",unsafe_allow_html=True)
+
 # Hide the hamburger icon
+plans_data_file = Path("pages/plans.csv")
 hide_menu_style = """
     <style>
-    #MainMenu {visibility: block;}
+    #MainMenu {visibility: hidden;}
+     #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cl.st-cf.st-cg.st-ch > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div > div > div > button
+    {margin-top:33px;}
+    #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-bx.st-ag.st-ah.st-ai.st-aj.st-by.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-ar.st-as.st-b6.st-b5.st-b3.st-c5.st-c6.st-c7.st-b4.st-c8.st-c9.st-ca.st-cb.st-cc > div > p
+    { font-size: 22px !important; font-weight: bold !important; }
+    #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div
+    { margin-top:-60px; }
     </style>
     """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 # NAV
+
 menu_list = ["Call Plans", "Call Reports"]
 navmenu_selected = Navbar2(menu_list)
 
@@ -26,9 +43,11 @@ def load_data(file):
     data1 = pd.read_csv(file)
     return data1
 
+
 def get_rm_clients(rmId):
-    clients = ['Omar','Boss',"Bose"]
+    clients = ['Omar', 'Boss', "Bose"]
     return clients
+
 
 if 'client_name' not in st.session_state:
     st.session_state.client_name = "c1"
@@ -37,12 +56,13 @@ if 'client_SOT' not in st.session_state:
 if 'client_outstanding' not in st.session_state:
     st.session_state.client_outstanding = "nothing"
 
+
 def fetch_client_data(cif):
     cn = st.session_state.client_name = "Ericson Telecom"
     sot = st.session_state.client_SOT = "4000"
     out = st.session_state.client_outstanding = "Some outstanding data fetched"
     data = {
-        'Client CIF':[cif],
+        'Client CIF': [cif],
         'Client Name': [cn],
         'Client SOT': [sot],
         'Client Outstanding': [out]
@@ -52,6 +72,7 @@ def fetch_client_data(cif):
     st.dataframe(df)
     # st.write(f"cif: {cif} client name: -{st.session_state.client_name}-SOT: { st.session_state.client_SOT}-Outstanding: {st.session_state.client_outstanding}")
 
+
 def get_RMs_list():
     # get the list from somewhere
     result = ['Ahmad', 'John', 'Cooper']
@@ -59,7 +80,6 @@ def get_RMs_list():
 
 
 def call_plan_page():
-
     with st.expander("Schedule a new Plan"):
         # with st.form(key='my_form', clear_on_submit=False):
         # Get today's date
@@ -88,7 +108,6 @@ def call_plan_page():
                 time.sleep(1)
                 save_plan()
                 st.success('Add a new Call Plan Successfully.')
-
 
                 data = {
                     "rm": rm,
@@ -119,11 +138,13 @@ if 'person_list' not in st.session_state:
 if 'c_type' not in st.session_state:
     st.session_state.c_type = ""
 
+
 def call_report_page():
     with st.expander("Add new Call Report Record"):
         # with st.form(key='call_report', clear_on_submit=False):
         # Get today's date
         # today = date.today().strftime("%Y-%m-%d")
+        st.markdown(f"<h3>Client Details</h3>", unsafe_allow_html=True)
         r2c1, r2c2 = st.columns(2)
         client_type = r2c1.radio(
             "Select Client Type 👇",
@@ -138,8 +159,12 @@ def call_report_page():
             st.session_state.c_type = "n"
         else:
             st.session_state.c_type = "e"
-            st.write("Exists")
+            # st.write("Exists")
 
+        if st.session_state.c_type == "n":
+            client_name = st.text_input("Client's Name", value='client name')
+        elif st.session_state.c_type == "e":
+            client_name = st.selectbox("Client's Name", get_rm_clients(1))
         # r2c1.radio("Client Type", ("New Client", "Existing Client"))
 
         st.markdown(f"<h3>Report Details 📋</h3>", unsafe_allow_html=True)
@@ -147,11 +172,6 @@ def call_report_page():
         r1c1, r1c2 = st.columns(2)
         report_date = r1c1.date_input("Event Date", key="rep_date", min_value=datetime.today(), value=datetime.now())
         referenced_by = r1c2.text_input("Prospect Referenced By :", value='ref by')
-        st.markdown(f"<h3>Client Details</h3>", unsafe_allow_html=True)
-        if st.session_state.c_type =="n":
-            client_name = st.text_input("Client's Name", value='client name')
-        elif st.session_state.c_type == "e":
-            client_name = st.selectbox("Client's Name", get_rm_clients(1))
 
 
         st.markdown(f"<h3>Call Details 📞</h3>", unsafe_allow_html=True)
@@ -161,32 +181,27 @@ def call_report_page():
         st.markdown(f"<h3>Clients/Staff List Details 📋</h3>", unsafe_allow_html=True)
         st.markdown("<p>Please use the template below to fill the list then upload it.</p>", unsafe_allow_html=True)
         st.download_button(
-            "👉 People List Template 📝", Path("student.csv").read_text(), "student.csv"
+            "👉 People List Template 📝", Path("pages/plans.csv").read_text(), "plans.csv"
         )
         col1, col2 = st.columns(2)
         # Column 1
 
         with col1:
             st.header("Clients List")
-
             # upload the list
             uploaded_file = st.file_uploader("Upload a CSV file for called on List", type="csv", key="fupload1")
             # Check if a file was uploaded
             if uploaded_file is not None:
-                # Read the uploaded CSV file
                 df = pd.read_csv(uploaded_file)
                 st.dataframe(df)
 
                 for index, row in df.iterrows():
-                    person = Person(row['name'], row['title'], row['department'], row['phone'] )
+                    person = Person(row['name'], row['title'], row['department'], row['phone'])
                     st.session_state.person_list.append(person)
 
         # Column 2
         with col2:
             st.header("Staff Officers List")
-            # st.download_button(
-            #     "Staff Template 📝", Path("template.csv").read_text(), "student.csv"
-            # )
             uploaded_file = st.file_uploader("Upload a CSV file for called on List", type="csv", key="fupload2")
             # Check if a file was uploaded
             if uploaded_file is not None:
@@ -195,7 +210,7 @@ def call_report_page():
                 st.dataframe(df)
 
                 for index, row in df.iterrows():
-                    staff = Person(row['name'], row['title'], row['department'], row['phone'] )
+                    staff = Person(row['name'], row['title'], row['department'], row['phone'])
                     staff_list.append(staff)
 
         st.markdown(f"<h3>Agenda Details 📒</h3>", unsafe_allow_html=True)
@@ -224,7 +239,7 @@ def call_report_page():
 
 
 def report_plan_json(
-         client_name, client_type, referenced_by, call_date_time, the_place
+        client_name, client_type, referenced_by, call_date_time, the_place
         , calledOnList, callingList, call_objective, points_of_discusstion, actionable_items
         , create_date, created_by):
     called_list = [person_to_dict(person) for person in calledOnList]
@@ -252,16 +267,38 @@ def save_report_plan(reportPlanObject):
     pass
 
 
+# <i class="fas fa-eye"></i>
+# st.markdown('<i class="fas fa-eye"></i> Star', unsafe_allow_html=True)
+cellsytle_jscode = JsCode("""
+function(params) {
+    if (params.value == 'A') {
+        return {
+            'color': 'white',
+            'backgroundColor': 'darkred'
+        }
+    } else {
+        return {
+            'color':'black',
+            'backgroundColor': 'white'
+        }
+    }
+};
+""")
+
+
+# ✍️ ✏️👁️✏️❌👁‍🗨
 def show_grid(url, df):
     injected_javascript = f"""
         class UrlCellRenderer {{
             init(params) {{
                 this.eGui = document.createElement('a');
-                this.eGui.innerText = params.value;
+                this.eGui.innerText = "👁️";
+                this.eGui.setAttribute('title', params.value);
                 this.eGui.setAttribute("href", "{url}" + params.value);
                 this.eGui.setAttribute('style', "text-decoration:underline");
-                this.eGui.setAttribute('style', "color:red");
+                this.eGui.setAttribute('style', "color:white");
                 this.eGui.setAttribute('target', "_blank");
+ 
             }}
             getGui() {{
                 return this.eGui;
@@ -274,13 +311,18 @@ def show_grid(url, df):
         "id", "Id",
         cellRenderer=JsCode(injected_javascript)
     )
+    # gd.configure_column("class", cellStyle=cellsytle_jscode)
     gd.configure_side_bar(filters_panel=True)
-    # gd.configure_column("name", width=30)
+    gd.configure_column("id", width=40)
     # gd.configure_columns(column_names, width=100)
     # gd.configure_default_column(editable=True, groupable=True)
     # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
     gdOptions = gd.build()
     # df = load_data()
+    custom_css = {
+        ".ag-row-hover": {"background-color": " #C09C20 !important"},
+        #".ag-header-cell-label": {"background-color": "orange !important"}
+    }
     AgGrid(df
            , gridOptions=gdOptions
            , allow_unsafe_jscode=True
@@ -289,11 +331,12 @@ def show_grid(url, df):
            , enable_quicksearch=True
            , reload_data=True
            , fit_columns_on_grid_load=True
+            , custom_css =custom_css,
            )
 
 
 def plansGrid():
-    show_grid("http://localhost:8502/view_plan?q=", load_data('pages/student.csv'))
+    show_grid("http://localhost:8502/view_plan?q=", load_data('pages/plans.csv'))
 
 
 def callReportGrid(df):
