@@ -23,7 +23,7 @@ plans_data_file = Path("pages/plans.csv")
 hide_menu_style = """
     <style>
     #MainMenu {visibility: hidden;}
-     #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cl.st-cf.st-cg.st-ch > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div > div > div > button
+     #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cm.st-cg.st-ch.st-ci > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div
     {margin-top:33px;}
     #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-bx.st-ag.st-ah.st-ai.st-aj.st-by.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-ar.st-as.st-b6.st-b5.st-b3.st-c5.st-c6.st-c7.st-b4.st-c8.st-c9.st-ca.st-cb.st-cc > div > p
     { font-size: 22px !important; font-weight: bold !important; }
