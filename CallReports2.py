@@ -1,12 +1,15 @@
 import time
 from datetime import datetime, date
 from pathlib import Path
+from random import random
+
 from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from navbar import *
 from common import *
 from utility import *
 from popup import *
+from DAL.data_access import *
 
 general_settings()
 # get user info
@@ -16,6 +19,73 @@ q_userId = (qid['user'][0])
 userId, token_expiry = get_user_claims(q_userId)
 if token_expiry is not None:
     token_expiry_date = datetime.fromtimestamp(token_expiry)
+
+
+
+def show_grid(url, df):
+    injected_javascript = f"""
+        class UrlCellRenderer {{
+            init(params) {{
+                this.eGui = document.createElement('a');
+                this.eGui.innerText = "👁️";
+                this.eGui.setAttribute('title', params.value);
+                this.eGui.setAttribute("href", "{url}" + params.value);
+                this.eGui.setAttribute('style', "text-decoration:underline");
+                this.eGui.setAttribute('style', "color:white");
+                this.eGui.setAttribute('target', "_blank");
+
+            }}
+            getGui() {{
+                return this.eGui;
+            }}
+        }}
+    """
+    gd = GridOptionsBuilder.from_dataframe(df)
+    gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+    gd.configure_column(
+        "id", "Id",
+        cellRenderer=JsCode(injected_javascript)
+    )
+    # gd.configure_column("class", cellStyle=cellsytle_jscode)
+    gd.configure_side_bar(filters_panel=True)
+    gd.configure_column("id", width=40)
+    # gd.configure_columns(column_names, width=100)
+    # gd.configure_default_column(editable=True, groupable=True)
+    # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
+    gdOptions = gd.build()
+    # df = load_data()
+    custom_css = {
+        ".ag-row-hover": {"background-color": " #C09C20 !important"},
+    }
+    AgGrid(df
+           , gridOptions=gdOptions
+           , allow_unsafe_jscode=True
+           , enable_enterprise_modules=True
+           , theme="streamlit"
+           , enable_quicksearch=True
+           , reload_data=True
+           , fit_columns_on_grid_load=True
+           , custom_css=custom_css,
+           )
+
+
+def plansGrid():
+    show_grid("http://localhost:8502/view_plan?q=", load_data('pages/plans.csv'))
+
+
+def callReportGrid(df):
+    show_grid("http://localhost:8502/view_report?q=", df)
+
+
+if 'is_manager' not in st.session_state:
+    st.session_state.is_manager = False
+    st.session_state.is_manager = is_user_manager(2)
+if 'client_name' not in st.session_state:
+    st.session_state.client_name = "c1"
+if 'client_SOT' not in st.session_state:
+    st.session_state.client_SOT = "0"
+if 'client_outstanding' not in st.session_state:
+    st.session_state.client_outstanding = "nothing"
 
 
 def main():
@@ -31,7 +101,7 @@ def main():
             <style>
             #MainMenu {visibility: hidden;}
              #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cm.st-cg.st-ch.st-ci > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div
-            {margin-top:33px;}
+            {margin-top:0px;}
             #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-by.st-ag.st-ah.st-ai.st-aj.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-c5.st-ar.st-as.st-b6.st-b5.st-b3.st-c6.st-c7.st-c8.st-b4.st-c9.st-ca.st-cb.st-cc.st-cd > div > p
             { font-size: 22px !important; font-weight: bold !important; }
             #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div
@@ -44,41 +114,6 @@ def main():
         menu_list = ["Call Plans", "Call Reports"]
         navmenu_selected = Navbar2(menu_list)
 
-        # @st.cache_data()
-        def load_data(file):
-            data1 = pd.read_csv(file)
-            return data1
-
-        def get_rm_clients(rmId):
-            clients = ['Omar', 'Boss', "Bose"]
-            return clients
-
-        if 'client_name' not in st.session_state:
-            st.session_state.client_name = "c1"
-        if 'client_SOT' not in st.session_state:
-            st.session_state.client_SOT = "0"
-        if 'client_outstanding' not in st.session_state:
-            st.session_state.client_outstanding = "nothing"
-
-        def fetch_client_data(cif):
-            cn = st.session_state.client_name = "Ericson Telecom"
-            sot = st.session_state.client_SOT = "4000"
-            out = st.session_state.client_outstanding = "Some outstanding data fetched"
-            data = {
-                'Client CIF': [cif],
-                'Client Name': [cn],
-                'Client SOT': [sot],
-                'Client Outstanding': [out]
-            }
-            # Convert the dictionary to a DataFrame
-            df = pd.DataFrame(data)
-            st.dataframe(df)
-            # st.write(f"cif: {cif} client name: -{st.session_state.client_name}-SOT: { st.session_state.client_SOT}-Outstanding: {st.session_state.client_outstanding}")
-
-        def get_RMs_list():
-            # get the list from somewhere
-            result = ['Ahmad', 'John', 'Cooper']
-            return result
 
         def call_plan_page():
             with st.expander("Schedule a new Plan"):
@@ -87,15 +122,28 @@ def main():
                 today = date.today().strftime("%Y-%m-%d")
                 # Display the date in the form header
                 st.markdown(f"<h3>Request Date - {today}</h3>", unsafe_allow_html=True)
-                RM_list = get_RMs_list()
-                rm = st.selectbox('Select RM 🙎‍♂', RM_list)
+                selected_rm_result = 0
+                if st.session_state.is_manager == True:
+                    rm_list = get_rms_list(1)
+                    selected_rm = st.selectbox(
+                        "Relationship Manager 🙎‍",
+                        range(len(rm_list)),
+                        format_func=lambda x: list(rm_list[x].values())[0]
+                    )
+                    selected_rm_result = list(rm_list[selected_rm].keys())[0]
+
+                    # selected_rm = st.selectbox('Relationship Manager 🙎‍♂',rm_list, index= 2, disabled=False, help="Select RM")
+                else:
+                    selected_rm = st.selectbox('Relationship Manager 🙎‍♂', str(userId), disabled=True)
+
+                st.write("Client CIF")
                 r1c1, r1c2 = st.columns(2)
-                # client_name = r1c1.text_input("Client Name:", value='client name')
-                client_cif = r1c1.text_input("Client CIF :", value='cif num')
+
+                client_cif = r1c1.text_input("Client CIF :", value='12323-JF22ffh-233',label_visibility="collapsed")
                 if r1c2.button("Fetch Client Data"):
                     fetch_client_data(client_cif)
 
-                purpose = st.text_area("Purpose", height=100, value='purpose of this')
+                purpose = st.selectbox("Purpose", get_purpose_options(), key='purposethis')
                 expected_call_date = st.date_input("Select Expected Call Date", key="exp_date",
                                                    min_value=datetime.today())
                 # sot = st.text_input("Enter SOT")
@@ -112,7 +160,7 @@ def main():
                         st.success('Add a new Call Plan Successfully.')
 
                         data = {
-                            "rm": rm,
+                            "rm_id": selected_rm_result,
                             "client_name": st.session_state.client_name,
                             "client_cif": client_cif,
                             "client_sot": st.session_state.client_SOT,
@@ -127,9 +175,6 @@ def main():
 
                 # st.write("First Name:", fn)
 
-        def save_plan():
-            # save into db
-            pass
 
         staff_list = []
         if 'person_list' not in st.session_state:
@@ -139,6 +184,9 @@ def main():
             st.session_state.c_type = ""
 
         def call_report_page():
+            call_start =""
+            call_end = ""
+            next_call = ""
             with st.expander("Add new Call Report Record"):
                 # with st.form(key='call_report', clear_on_submit=False):
                 # Get today's date
@@ -174,7 +222,17 @@ def main():
                 referenced_by = r1c2.text_input("Prospect Referenced By :", value='ref by')
 
                 st.markdown(f"<h3>Call Details 📞</h3>", unsafe_allow_html=True)
-                call_date_time = st.date_input("Call Date", key="call_datetime", min_value=datetime.today())
+                c1, c2, c3, c4 = st.columns(4)
+                with st.container():
+                    call_date_start = c1.date_input("Call Start", key="call_datetime1", min_value=datetime.today())
+                    call_time_start= c2.time_input("Call Time", key="jjh", label_visibility="hidden",value=None)
+                    # st.write(str(call_date_start)+" "+str(call_time_start))
+                    call_start = str(call_date_start)+" "+str(call_time_start)
+                    call_date_end = c3.date_input("Call end", key="call_datetime3", min_value=datetime.today())
+                    call_time_end = c4.time_input("Call end", key="call_datetime4", label_visibility="hidden")
+                    # st.write(str(call_date_end) + " " + str(call_time_end))
+                    call_end = str(call_date_end) + " " + str(call_time_end)
+
                 the_place = st.text_input("Place", value='Riyad')
                 # Create a two-column layout
                 st.markdown(f"<h3>Clients/Staff List Details 📋</h3>", unsafe_allow_html=True)
@@ -185,7 +243,6 @@ def main():
                 )
                 col1, col2 = st.columns(2)
                 # Column 1
-
                 with col1:
                     st.header("Clients List")
                     # upload the list
@@ -218,36 +275,44 @@ def main():
                 points_of_discusstion = st.text_area("Points of Discussion", height=100, value="points of discusion")
                 actionable_items = st.text_area("Actionable Items", height=100, value="acional items")
 
+                c1, c2 = st.columns(2)
+                with st.container():
+                    next_call_date = c1.date_input("Next Call Date", key="nxtd", min_value=datetime.today())
+                    next_call_time = c2.time_input("Call Time", key="nxtt", label_visibility="hidden", value=None)
+
+                next_call = str(next_call_date) + " " + str(next_call_time)
+
                 submit_report = st.button(label='Submit')
                 if submit_report:
                     # st.write(st.session_state.person_list)
                     json_obj = report_plan_json(
-
                         client_name,
                         client_type,
                         referenced_by,
-                        str(call_date_time),
                         the_place,
                         st.session_state.person_list, staff_list,
                         call_objective, points_of_discusstion, actionable_items
                         , str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                         , "Moubien"
+                        , call_start
+                        , call_end
+                        ,next_call
                     )
                     st.json(json_obj)
                     # st.dataframe(json_to_dataframe(json_obj))
                     # Create an empty list to store the employees
 
         def report_plan_json(
-                client_name, client_type, referenced_by, call_date_time, the_place
+                client_name, client_type, referenced_by, the_place
                 , calledOnList, callingList, call_objective, points_of_discusstion, actionable_items
-                , create_date, created_by):
+                , create_date, created_by, call_start, call_end, next_call):
             called_list = [person_to_dict(person) for person in calledOnList]
             calling_list = [person_to_dict(person) for person in callingList]
             data = {
+                "rm_id": userId,
                 "client_name": client_name,
                 "client_type": client_type,
                 "referenced_by": referenced_by,
-                "call_date_time": call_date_time,
                 "the_place": the_place,
                 "called_list": called_list,
                 "calling_list": calling_list,
@@ -255,14 +320,15 @@ def main():
                 "points_of_discusstion": points_of_discusstion,
                 "actionable_items": actionable_items,
                 "create_date": create_date,
-                "created_by": created_by
-
+                "created_by": created_by,
+                "call_start": call_start,
+                "call_end": call_end,
+                "next_call": next_call
             }
 
             return json.dumps(data)
 
-        def save_report_plan(reportPlanObject):
-            pass
+
 
         cellsytle_jscode = JsCode("""
         function(params) {
@@ -281,58 +347,6 @@ def main():
         """)
 
         # ✍️ ✏️👁️✏️❌👁‍🗨
-        def show_grid(url, df):
-            injected_javascript = f"""
-                class UrlCellRenderer {{
-                    init(params) {{
-                        this.eGui = document.createElement('a');
-                        this.eGui.innerText = "👁️";
-                        this.eGui.setAttribute('title', params.value);
-                        this.eGui.setAttribute("href", "{url}" + params.value);
-                        this.eGui.setAttribute('style', "text-decoration:underline");
-                        this.eGui.setAttribute('style', "color:white");
-                        this.eGui.setAttribute('target', "_blank");
-         
-                    }}
-                    getGui() {{
-                        return this.eGui;
-                    }}
-                }}
-            """
-            gd = GridOptionsBuilder.from_dataframe(df)
-            gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-            gd.configure_column(
-                "id", "Id",
-                cellRenderer=JsCode(injected_javascript)
-            )
-            # gd.configure_column("class", cellStyle=cellsytle_jscode)
-            gd.configure_side_bar(filters_panel=True)
-            gd.configure_column("id", width=40)
-            # gd.configure_columns(column_names, width=100)
-            # gd.configure_default_column(editable=True, groupable=True)
-            # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
-            gdOptions = gd.build()
-            # df = load_data()
-            custom_css = {
-                ".ag-row-hover": {"background-color": " #C09C20 !important"},
-                # ".ag-header-cell-label": {"background-color": "orange !important"}
-            }
-            AgGrid(df
-                   , gridOptions=gdOptions
-                   , allow_unsafe_jscode=True
-                   , enable_enterprise_modules=True
-                   , theme="streamlit"
-                   , enable_quicksearch=True
-                   , reload_data=True
-                   , fit_columns_on_grid_load=True
-                   , custom_css=custom_css,
-                   )
-
-        def plansGrid():
-            show_grid("http://localhost:8502/view_plan?q=", load_data('pages/plans.csv'))
-
-        def callReportGrid(df):
-            show_grid("http://localhost:8502/view_report?q=", df)
 
         # Nav bar on selection
         if navmenu_selected == 'Call Plans':

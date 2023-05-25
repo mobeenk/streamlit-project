@@ -58,3 +58,5 @@ def get_user_claims(token):
         return user_id, read_jwt_token(token)[1]
     else:
         return None, None
+
+
