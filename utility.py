@@ -59,4 +59,23 @@ def get_user_claims(token):
     else:
         return None, None
 
+#
+def InjectJSCode(url, icon):
+    injected_javascript = f"""
+            class UrlCellRenderer {{
+                init(params) {{
+                    this.eGui = document.createElement('a');
+                    this.eGui.innerText = "{icon}";
+                    this.eGui.setAttribute('title', params.value);
+                    this.eGui.setAttribute("href", "{url}" + params.value);
+                    this.eGui.setAttribute('style', "text-decoration:underline");
+                    this.eGui.setAttribute('style', "color:white");
+                    this.eGui.setAttribute('target', "_blank");
 
+                }}
+                getGui() {{
+                    return this.eGui;
+                }}
+            }}
+        """
+    return injected_javascript

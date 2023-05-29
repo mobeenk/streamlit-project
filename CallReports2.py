@@ -22,34 +22,31 @@ if token_expiry is not None:
 
 
 
-def show_grid(url, df):
-    injected_javascript = f"""
-        class UrlCellRenderer {{
-            init(params) {{
-                this.eGui = document.createElement('a');
-                this.eGui.innerText = "👁️";
-                this.eGui.setAttribute('title', params.value);
-                this.eGui.setAttribute("href", "{url}" + params.value);
-                this.eGui.setAttribute('style', "text-decoration:underline");
-                this.eGui.setAttribute('style', "color:white");
-                this.eGui.setAttribute('target', "_blank");
+def show_grid(addurl, editurl,  df):
+    edit_column = df['id'].copy()
+    edit_column.rename('edit', inplace=True)
+    # df_new = pd.concat([new_column, df], axis=1)
 
-            }}
-            getGui() {{
-                return this.eGui;
-            }}
-        }}
-    """
-    gd = GridOptionsBuilder.from_dataframe(df)
+    # remove_column = df['id'].copy()
+    # remove_column.rename('remove', inplace=True)
+    df_new = pd.concat([edit_column, df], axis=1)
+
+    id_injectJs = InjectJSCode(addurl, "👁️")
+    edit_injectJs = InjectJSCode(editurl, "️✏️")
+    # remove_injectJs = InjectJSCode(removeurl, "️❌")
+
+    gd = GridOptionsBuilder.from_dataframe(df_new)
     gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-    gd.configure_column(
-        "id", "Id",
-        cellRenderer=JsCode(injected_javascript)
-    )
+    gd.configure_column( "id", "View", cellRenderer=JsCode(id_injectJs))
+    gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
+    # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
     # gd.configure_column("class", cellStyle=cellsytle_jscode)
     gd.configure_side_bar(filters_panel=True)
-    gd.configure_column("id", width=40)
-    # gd.configure_columns(column_names, width=100)
+
+    gd.configure_columns(df_new.columns, width=30)
+    gd.configure_column("id", width=20)
+    gd.configure_column("edit", width=20)
+    gd.configure_column("remove", width=20)
     # gd.configure_default_column(editable=True, groupable=True)
     # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
     gdOptions = gd.build()
@@ -57,7 +54,7 @@ def show_grid(url, df):
     custom_css = {
         ".ag-row-hover": {"background-color": " #C09C20 !important"},
     }
-    AgGrid(df
+    AgGrid(df_new
            , gridOptions=gdOptions
            , allow_unsafe_jscode=True
            , enable_enterprise_modules=True
@@ -70,11 +67,11 @@ def show_grid(url, df):
 
 
 def plansGrid():
-    show_grid("http://localhost:8502/view_plan?q=", load_data('pages/plans.csv'))
+    show_grid(PLAN_ADD_URL, PLAN_EDIT_URL, load_data('pages/plans.csv'))
 
 
 def callReportGrid(df):
-    show_grid("http://localhost:8502/view_report?q=", df)
+    show_grid(CALLREPORT_ADD_URL, CALLREPORT_EDIT_URL, df)
 
 
 if 'is_manager' not in st.session_state:
@@ -392,6 +389,7 @@ def main():
                 df = []
                 df = load_data('pages/callreports.csv')
             callReportGrid(df)
+
 
 
 if __name__ == '__main__':
