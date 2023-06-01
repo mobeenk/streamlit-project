@@ -1,88 +1,31 @@
 import time
 from datetime import datetime, date
 from pathlib import Path
-from random import random
-
-from st_aggrid import AgGrid, JsCode
-from st_aggrid.grid_options_builder import GridOptionsBuilder
 from navbar import *
 from common import *
 from utility import *
 from popup import *
 from DAL.data_access import *
 
-general_settings()
-# get user info
-qid = st.experimental_get_query_params()
-q_userId = (qid['user'][0])
 
-userId, token_expiry = get_user_claims(q_userId)
+general_settings()
+session_settings()
+# get token from URL
+token = get_query_param_by_name('token')
+
+userId, token_expiry = get_user_claims(token)
 if token_expiry is not None:
     token_expiry_date = datetime.fromtimestamp(token_expiry)
 
 
+# is_token_expired
 
-def show_grid(addurl, editurl,  df):
-    edit_column = df['id'].copy()
-    edit_column.rename('edit', inplace=True)
-    # df_new = pd.concat([new_column, df], axis=1)
-
-    # remove_column = df['id'].copy()
-    # remove_column.rename('remove', inplace=True)
-    df_new = pd.concat([edit_column, df], axis=1)
-
-    id_injectJs = InjectJSCode(addurl, "👁️")
-    edit_injectJs = InjectJSCode(editurl, "️✏️")
-    # remove_injectJs = InjectJSCode(removeurl, "️❌")
-
-    gd = GridOptionsBuilder.from_dataframe(df_new)
-    gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-    gd.configure_column( "id", "View", cellRenderer=JsCode(id_injectJs))
-    gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
-    # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
-    # gd.configure_column("class", cellStyle=cellsytle_jscode)
-    gd.configure_side_bar(filters_panel=True)
-
-    gd.configure_columns(df_new.columns, width=30)
-    gd.configure_column("id", width=20)
-    gd.configure_column("edit", width=20)
-    gd.configure_column("remove", width=20)
-    # gd.configure_default_column(editable=True, groupable=True)
-    # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
-    gdOptions = gd.build()
-    # df = load_data()
-    custom_css = {
-        ".ag-row-hover": {"background-color": " #C09C20 !important"},
-    }
-    AgGrid(df_new
-           , gridOptions=gdOptions
-           , allow_unsafe_jscode=True
-           , enable_enterprise_modules=True
-           , theme="streamlit"
-           , enable_quicksearch=True
-           , reload_data=True
-           , fit_columns_on_grid_load=True
-           , custom_css=custom_css,
-           )
+def plansGrid(data):
+    show_grid(view_plan_url(token), edit_plan_url(token), data)
 
 
-def plansGrid():
-    show_grid(PLAN_ADD_URL, PLAN_EDIT_URL, load_data('pages/plans.csv'))
-
-
-def callReportGrid(df):
-    show_grid(CALLREPORT_ADD_URL, CALLREPORT_EDIT_URL, df)
-
-
-if 'is_manager' not in st.session_state:
-    st.session_state.is_manager = False
-    st.session_state.is_manager = is_user_manager(2)
-if 'client_name' not in st.session_state:
-    st.session_state.client_name = "c1"
-if 'client_SOT' not in st.session_state:
-    st.session_state.client_SOT = "0"
-if 'client_outstanding' not in st.session_state:
-    st.session_state.client_outstanding = "nothing"
+def callReportGrid(data):
+    show_grid(view_report_url(token), edit_report_url(token), data)
 
 
 def main():
@@ -92,25 +35,11 @@ def main():
         st.markdown(notfound_page("Session Expired"), unsafe_allow_html=True)
     else:
         components.html(page_head(userId, token_expiry_date))
-        # Hide the hamburger icon
-        plans_data_file = Path("pages/plans.csv")
-        hide_menu_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-             #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.st-am.st-cm.st-cg.st-ch.st-ci > div > div:nth-child(1) > div > div.css-ocqkz7.e1tzin5v3 > div:nth-child(2) > div:nth-child(1) > div
-            {margin-top:0px;}
-            #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div.css-ybnenh.e1s6o5jp0 > ul > li > div.streamlit-expanderHeader.st-ae.st-by.st-ag.st-ah.st-ai.st-aj.st-bz.st-c0.st-c1.st-c2.st-c3.st-c4.st-c5.st-ar.st-as.st-b6.st-b5.st-b3.st-c6.st-c7.st-c8.st-b4.st-c9.st-ca.st-cb.st-cc.st-cd > div > p
-            { font-size: 22px !important; font-weight: bold !important; }
-            #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div
-            { margin-top:-60px; }
-            </style>
-            """
-        st.markdown(hide_menu_style, unsafe_allow_html=True)
-        # NAV
+        page_settings()
+
 
         menu_list = ["Call Plans", "Call Reports"]
         navmenu_selected = Navbar2(menu_list)
-
 
         def call_plan_page():
             with st.expander("Schedule a new Plan"):
@@ -136,7 +65,7 @@ def main():
                 st.write("Client CIF")
                 r1c1, r1c2 = st.columns(2)
 
-                client_cif = r1c1.text_input("Client CIF :", value='12323-JF22ffh-233',label_visibility="collapsed")
+                client_cif = r1c1.text_input("Client CIF :", value='12323-JF22ffh-233', label_visibility="collapsed")
                 if r1c2.button("Fetch Client Data"):
                     fetch_client_data(client_cif)
 
@@ -172,7 +101,6 @@ def main():
 
                 # st.write("First Name:", fn)
 
-
         staff_list = []
         if 'person_list' not in st.session_state:
             st.session_state.person_list = []
@@ -181,7 +109,7 @@ def main():
             st.session_state.c_type = ""
 
         def call_report_page():
-            call_start =""
+            call_start = ""
             call_end = ""
             next_call = ""
             with st.expander("Add new Call Report Record"):
@@ -222,9 +150,9 @@ def main():
                 c1, c2, c3, c4 = st.columns(4)
                 with st.container():
                     call_date_start = c1.date_input("Call Start", key="call_datetime1", min_value=datetime.today())
-                    call_time_start= c2.time_input("Call Time", key="jjh", label_visibility="hidden",value=None)
+                    call_time_start = c2.time_input("Call Time", key="jjh", label_visibility="hidden", value=None)
                     # st.write(str(call_date_start)+" "+str(call_time_start))
-                    call_start = str(call_date_start)+" "+str(call_time_start)
+                    call_start = str(call_date_start) + " " + str(call_time_start)
                     call_date_end = c3.date_input("Call end", key="call_datetime3", min_value=datetime.today())
                     call_time_end = c4.time_input("Call end", key="call_datetime4", label_visibility="hidden")
                     # st.write(str(call_date_end) + " " + str(call_time_end))
@@ -293,11 +221,9 @@ def main():
                         , "Moubien"
                         , call_start
                         , call_end
-                        ,next_call
+                        , next_call
                     )
                     st.json(json_obj)
-                    # st.dataframe(json_to_dataframe(json_obj))
-                    # Create an empty list to store the employees
 
         def report_plan_json(
                 client_name, client_type, referenced_by, the_place
@@ -325,8 +251,6 @@ def main():
 
             return json.dumps(data)
 
-
-
         cellsytle_jscode = JsCode("""
         function(params) {
             if (params.value == 'A') {
@@ -350,48 +274,39 @@ def main():
             call_plan_page()
             grid_title = "My Call Plans"
             st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-            plansGrid()
+            plansGrid(load_data('pages/plans.csv'))
             # st.markdown('<h2 style="color:red;"">Home</h2>', unsafe_allow_html=True)
         if navmenu_selected == 'Call Reports':
             call_report_page()
             grid_title = "My Calls Reports"
             st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
 
-            report_creation_date_from = ""
-            report_creation_date_to = ""
-            report_from = ""
-            report_to = ""
-
             col1, col2 = st.columns(2)
             with col1:
-                date_range = st.date_input("Select Creation Date range", value=(date.today(), date.today()),
-                                           key="recorddate")
+                pass
+                # date_range = st.date_input("Select Creation Date range", value=(date.today(), date.today()), key="recorddate")
                 # start_date = st.date_input('Date From')
-                report_creation_date_from = date_range[0]
-                report_creation_date_to = date_range[1]
+                # report_creation_date_from = date_range[0]
+                # report_creation_date_to = date_range[1]
             with col2:
                 pass
-                # date_range = st.date_input("Select Call Date range", value=(date.today(), date.today()), key="calldate")
-                # callfrom = date_range[0]
-                # callto = date_range[1]
-                # end_date = st.date_input('To')
 
-            load_btn = st.button("Load")
-            if load_btn:
-                df = load_data('pages/callreports.csv')
-                df['creation_date'] = pd.to_datetime(df['creation_date'])
-                df = df.query('@report_creation_date_from <= creation_date <= @report_creation_date_to')
+            # load_btn = st.button("Load")
+            # if load_btn:
+            #     df = load_data('pages/callreports.csv')
+            #     df['creation_date'] = pd.to_datetime(df['creation_date'])
+            #     df = df.query('@report_creation_date_from <= creation_date <= @report_creation_date_to')
 
-            else:
-                df = load_data('pages/callreports.csv')
-            all_btn = st.button("All Data")
-            if all_btn:
-                df = []
-                df = load_data('pages/callreports.csv')
+            # else:
+            #     df = load_data('pages/callreports.csv')
+
+            # all_btn = st.button("All Data")
+            # if all_btn:
+            #     df = []
+            #     df = load_data('pages/callreports.csv')
+            df = load_data('pages/callreports.csv')
             callReportGrid(df)
-
 
 
 if __name__ == '__main__':
     main()
-

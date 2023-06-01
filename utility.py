@@ -2,7 +2,8 @@ import base64
 import json
 import pandas as pd
 import streamlit as st
-from jwt_generator  import  *
+from st_aggrid import AgGrid, JsCode
+from st_aggrid.grid_options_builder import GridOptionsBuilder
 class Person:
     def __init__(self, name, title, department, phone):
         self.name = name
@@ -50,14 +51,49 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 
-def get_user_claims(token):
-    isValid = is_valid_jwt(token, "your_secret_key")
-    if isValid == True:
-        user_id = read_jwt_token(token)[0]
-        # token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
-        return user_id, read_jwt_token(token)[1]
-    else:
-        return None, None
+
+def show_grid(addurl, editurl,  df):
+    edit_column = df['id'].copy()
+    edit_column.rename('edit', inplace=True)
+    # df_new = pd.concat([new_column, df], axis=1)
+
+    # remove_column = df['id'].copy()
+    # remove_column.rename('remove', inplace=True)
+    df_new = pd.concat([edit_column, df], axis=1)
+
+    id_injectJs = InjectJSCode(addurl, "👁️")
+    edit_injectJs = InjectJSCode(editurl, "️✏️")
+    # remove_injectJs = InjectJSCode(removeurl, "️❌")
+
+    gd = GridOptionsBuilder.from_dataframe(df_new)
+    gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+    gd.configure_column( "id", "View", cellRenderer=JsCode(id_injectJs))
+    gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
+    # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
+    # gd.configure_column("class", cellStyle=cellsytle_jscode)
+    gd.configure_side_bar(filters_panel=True)
+
+    gd.configure_columns(df_new.columns, width=30)
+    gd.configure_column("id", width=20)
+    gd.configure_column("edit", width=20)
+    # gd.configure_default_column(editable=True, groupable=True)
+    # gd.configure_selection(selection_mode='multiple', use_checkbox=True)
+    gdOptions = gd.build()
+    # df = load_data()
+    custom_css = {
+        ".ag-row-hover": {"background-color": " #C09C20 !important"},
+    }
+    AgGrid(df_new
+           , gridOptions=gdOptions
+           , allow_unsafe_jscode=True
+           , enable_enterprise_modules=True
+           , theme="streamlit"
+           , enable_quicksearch=True
+           , reload_data=True
+           , fit_columns_on_grid_load=True
+           , custom_css=custom_css,
+           )
+
 
 #
 def InjectJSCode(url, icon):
