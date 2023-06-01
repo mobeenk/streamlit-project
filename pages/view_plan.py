@@ -3,6 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from components import *
 from common import get_query_param_by_name, is_authorized
+from DAL.data_access import *
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 # qid = st.experimental_get_query_params()
@@ -11,7 +12,7 @@ extracted_value = get_query_param_by_name('id')
 
 
 def render_plan():
-    df = pd.read_csv("pages/plans.csv")
+    df = view_plan_by_id(extracted_value) # pd.read_csv("pages/plans.csv")
 
     record = df.query(f"id == {extracted_value}")
     # df2 = df[df['id'] == '3']
@@ -116,12 +117,24 @@ def render_plan():
           <span class="field-value">{record.iat[0, 2]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Purpose:</span>
+          <span class="field-label">Client Name:</span>
           <span class="field-value">{record.iat[0, 3]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Expected Call Date:</span>
+          <span class="field-label">Client SOT:</span>
           <span class="field-value">{record.iat[0, 4]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Outstanding:</span>
+          <span class="field-value">{record.iat[0, 5]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Purpose:</span>
+          <span class="field-value">{record.iat[0, 6]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Expected Call Date:</span>
+          <span class="field-value">{record.iat[0, 7]}</span>
         </div>
       </div>
     </body>
@@ -131,7 +144,9 @@ def render_plan():
     # st.write(df2['name'])
     st.markdown(html_markdown, unsafe_allow_html=True)
     # /* top, right, bottom, left */
-    components.html(remove_component(extracted_value))
+    is_admin = True
+    # if is_admin:
+    components.html(admin_approval_component(extracted_value))
 
 
 # only if authorized open the page

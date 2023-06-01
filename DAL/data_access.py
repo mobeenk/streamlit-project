@@ -13,6 +13,7 @@ def get_purpose_options():
 
 
 def load_data(file):
+    #d = run(""" select * from table whrere  user {rmcode} """)
     data1 = pd.read_csv(file)
     return data1
 
@@ -75,7 +76,27 @@ def get_plan_by_id(id):
     return json_data
 
 
+def get_report_by_id(id):
+    data = {
+        "rm_id": "userId",
+        "client_name": "client_name",
+        "client_type": "client_type",
+        "referenced_by": "referenced_by",
+        "the_place": "the_place",
+        "called_list": [],
+        "calling_list": [],
+        "call_objective": "call_objective",
+        "points_of_discusstion": "points_of_discusstion",
+        "actionable_items": "actionable_items",
+        "create_date": "2023-01-01",
+        "created_by": "Moubien",
+        "call_start": "2023-01-01",
+        "call_end": "2023-01-01",
+        "next_call": "2023-01-01"
+    }
 
+    json_data = json.dumps(data)
+    return json_data
 def getStaffList():
     person_list_1 = [
         Person("John Doe", "Manager", "MIS", "123123123"),
@@ -91,3 +112,12 @@ def getClientsList():
     ]
     return person_list_2
 
+
+def view_plan_by_id(id):
+    df = pd.read_csv("pages/plans.csv")
+    return df
+
+
+def view_report_by_id(id):
+    df = pd.read_csv("pages/callreports.csv")
+    return df

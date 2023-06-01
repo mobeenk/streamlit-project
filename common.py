@@ -6,7 +6,7 @@ from DAL.data_access import is_user_manager
 # JWT_TOKEN = get_jwt_token()
 BASE_URL = "http://localhost:8502"
 TOKEN_KEY = "'your_secret_key'"
-
+COLOR_DARK_YELLOW = "#C09C20"
 def view_plan_url(token):
     return f"{BASE_URL}/view_plan?token={token}&id="
 
@@ -37,7 +37,7 @@ def get_user_claims(token):
     if isValid == True:
         user_id = read_jwt_token(token)[0]
         # token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
-        return user_id, read_jwt_token(token)[1]
+        return user_id, read_jwt_token(token)[1], read_jwt_token(token)[2]
     else:
         return None, None
 
@@ -97,7 +97,7 @@ def is_authorized(exce_func):
     token = get_query_param_by_name('token')
     # print('my token\n'+token)
     try:
-        userId, token_expiry = get_user_claims(token)
+        userId, token_expiry, username = get_user_claims(token)
         # print(userId)
         # print(token_expiry)
         if not is_valid_jwt(token, TOKEN_KEY):

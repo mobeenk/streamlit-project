@@ -13,7 +13,7 @@ session_settings()
 # get token from URL
 token = get_query_param_by_name('token')
 
-userId, token_expiry = get_user_claims(token)
+userId, token_expiry, username = get_user_claims(token)
 if token_expiry is not None:
     token_expiry_date = datetime.fromtimestamp(token_expiry)
 
@@ -34,7 +34,7 @@ def main():
     elif userId is not None and token_expiry < int(round(datetime.now().timestamp())):
         st.markdown(notfound_page("Session Expired"), unsafe_allow_html=True)
     else:
-        components.html(page_head(userId, token_expiry_date))
+        components.html(page_head(userId, token_expiry_date, username))
         page_settings()
 
 
@@ -94,7 +94,7 @@ def main():
                             "purpose": purpose,
                             "expected_call_date": str(expected_call_date),
                             "create_date": str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-                            "created_by": st.session_state.client_name
+                            "created_by": userId
                         }
 
                         st.json(json.dumps(data))

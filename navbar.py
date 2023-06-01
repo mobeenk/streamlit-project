@@ -3,6 +3,7 @@ from datetime import datetime
 import streamlit as st
 from streamlit_option_menu import option_menu
 
+
 # 1. as sidebar menu
 # with st.sidebar:
 #     selected = option_menu("Main Menu", ["Home", 'Settings'],
@@ -11,30 +12,32 @@ from streamlit_option_menu import option_menu
 
 # 2. horizontal menu
 def Navbar2(menu_list):
-    selected2 = option_menu(None, menu_list ,
-        icons=['house', 'cloud-upload', "list-task", 'gear'],
-        menu_icon="cast", default_index=0, orientation="horizontal"
-          , styles="black"                 )
+    selected2 = option_menu(None, menu_list,
+                            icons=['house', 'cloud-upload', "list-task", 'gear'],
+                            menu_icon="cast", default_index=0, orientation="horizontal"
+                            , styles="black")
     return selected2
+
 
 # 3. CSS style definitions
 
 def Navbar3(menu_list):
     selected3 = option_menu(None, menu_list,
-        icons=['house', 'cloud-upload', "list-task", 'gear'],
-        menu_icon="cast", default_index=0, orientation="horizontal",
-        styles={
-            "container": {"padding": "0!important", "background-color": "#fafafa"},
-            "icon": {"color": "orange", "font-size": "25px"},
-            "nav-link": {"color": "black","font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-            "nav-link-selected": {"background-color": "green"},
-        }
-    )
+                            icons=['house', 'cloud-upload', "list-task", 'gear'],
+                            menu_icon="cast", default_index=0, orientation="horizontal",
+                            styles={
+                                "container": {"padding": "0!important", "background-color": "#fafafa"},
+                                "icon": {"color": "orange", "font-size": "25px"},
+                                "nav-link": {"color": "black", "font-size": "25px", "text-align": "left",
+                                             "margin": "0px", "--hover-color": "#eee"},
+                                "nav-link-selected": {"background-color": "green"},
+                            }
+                            )
     return selected3
 
-def page_head(username, token_expiry):
 
-    int_timestamp = int(token_expiry.timestamp())*1000 # 1685015047 * 1000 to milisecond
+def page_head(id, token_expiry, username):
+    int_timestamp = int(token_expiry.timestamp()) * 1000  # 1685015047 * 1000 to milisecond
     html_css_page = f"""
     <!DOCTYPE html>
     <html>
@@ -126,7 +129,7 @@ def page_head(username, token_expiry):
              <img class="my-image" src="https://www.saib.com.sa/sites/default/files/logo.png" alt="Logo">
            </div>
            <div class="flex-items flex-items-text bg">Welcome, 
-                <span style="color: #C09C20;">{username}</span>
+                <span style="color: #C09C20;"><b>{username}/{id}</b></span>
                 <div id="todaysDate"></div>
                 <div><i class="fas fa-star"></i>
                     Session Expire in: <span id="demo"></span>
@@ -198,4 +201,3 @@ def notfound_page(title):
     """
 
     return html_css_page
-
