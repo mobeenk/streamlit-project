@@ -1,9 +1,13 @@
 import base64
 import json
+from datetime import datetime
+
 import pandas as pd
 import streamlit as st
 from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
+
+
 class Person:
     def __init__(self, name, title):
         self.name = name
@@ -28,6 +32,8 @@ def person_to_dict(person):
         # "department": person.department,
         # "phone": person.phone
     }
+
+
 def json_to_dataframe(json_data):
     """
            Converts any valid json to pandas dataframe, make sure the json passed is cohherent with no lists.
@@ -44,6 +50,7 @@ def json_to_dataframe(json_data):
     df = pd.DataFrame(data_dict)
     return df
 
+
 @st.cache_resource()
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
@@ -51,8 +58,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 
-
-def show_grid(addurl, editurl,  df, cellsytle_jscode):
+def show_grid(addurl, editurl, df, cellsytle_jscode):
     edit_column = df['id'].copy()
     edit_column.rename('edit', inplace=True)
     # df_new = pd.concat([new_column, df], axis=1)
@@ -67,7 +73,7 @@ def show_grid(addurl, editurl,  df, cellsytle_jscode):
 
     gd = GridOptionsBuilder.from_dataframe(df_new)
     gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-    gd.configure_column( "id", "View", cellRenderer=JsCode(id_injectJs))
+    gd.configure_column("id", "View", cellRenderer=JsCode(id_injectJs))
     gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
     # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
     gd.configure_column("status", cellStyle=cellsytle_jscode)
@@ -115,3 +121,26 @@ def InjectJSCode(url, icon):
             }}
         """
     return injected_javascript
+
+
+import streamlit as st
+from fpdf import FPDF
+import base64
+
+
+def create_download_link(val, filename):
+    b64 = base64.b64encode(val)  # val looks like b'...'
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
+
+
+def export_pdf():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial', 'B', 16)
+    pdf.title
+    pdf.cell(40, 10, "report_text")
+    html = create_download_link(pdf.output(dest="S").encode("latin-1"), "test")
+
+    st.markdown(html, unsafe_allow_html=True)
+
+

@@ -3,6 +3,7 @@ from datetime import datetime, date
 from pathlib import Path
 from navbar import *
 from common import *
+from reportingPDF import export_reports_to_PDF
 from utility import *
 from popup import *
 from DAL.data_access import *
@@ -321,7 +322,6 @@ def main():
                 "create_date": create_date,
                 "created_by": created_by,
                 "call_start": call_start,
-                # "call_end": call_end,
                 "next_call": next_call
             }
 
@@ -395,6 +395,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+    export_reports_to_PDF(1)
     #
     # with col1:
     #     st.header("Clients List")
