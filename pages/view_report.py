@@ -4,9 +4,11 @@ from common import *
 from utility import *
 import streamlit as st
 from DAL.data_access import getStaffList, getClientsList, view_report_by_id
+import datetime
 
 general_settings()
-
+print_date = datetime.datetime.now()
+formatted_datetime = print_date.strftime("%Y-%m-%d %H:%M:%S")
 
 def render_view_report():
     # Use Font Awesome icons in your Streamlit app
@@ -22,15 +24,11 @@ def render_view_report():
     html_table_1 += "<tr>" \
                     "<th class='th-style'>Name</th>" \
                     "<th class='th-style'>Title</th>" \
-                    "<th class='th-style'>Department</th>" \
-                    "<th class='th-style'>Phone</th>" \
                     "</tr>"
     for person in getStaffList():
         html_table_1 += f"<tr>" \
                         f"<td class='td-stylex'>{person.name}</td>" \
                         f"<td class='td-stylex'>{person.title}</td>" \
-                        f"<td class='td-stylex'>{person.department}</td>" \
-                        f"<td class='td-stylex'>{person.phone}</td>" \
                         f"</tr>"
     html_table_1 += "</table>"
     html_table_1 += "</div>"
@@ -41,15 +39,11 @@ def render_view_report():
     html_table_2 += "<tr>" \
                     "<th class='th-style'>Name</th>" \
                     "<th class='th-style'>Title</th>" \
-                    "<th class='th-style'>Department</th>" \
-                    "<th class='th-style'>Phone</th>" \
                     "</tr>"
     for person in getClientsList():
         html_table_2 += f"<tr>" \
                         f"<td class='td-stylex'>{person.name}</td>" \
                         f"<td class='td-stylex'>{person.title}</td>" \
-                        f"<td class='td-stylex'>{person.department}</td>" \
-                        f"<td class='td-stylex'>{person.phone}</td>" \
                         f"</tr>"
     html_table_2 += "</table>"
     html_table_2 += "</div>"
@@ -209,18 +203,18 @@ def render_view_report():
           </div>
             <div class="report-field">
               <span class="field-label">Next Call Date:</span>
-              <span class="field-value">{record.iat[0, 13]}</span>
+              <span class="field-value">{record.iat[0, 14]}</span>
             </div>
             <div class="report-field">
               <span class="field-label"></span>
               <span class="field-value"></span>
             </div>
             <div class="report-field">
-              <span class="field-label">Called List:</span>
+              <span class="field-label">Clients List</span>
               <div class="field-value">{html_table_1}</div>
             </div>
-            <div class="report-field" >
-              <span class="field-label">Calling List:</span>
+            <div class="report-field">
+              <span class="field-label">Staff List</span>
               <div class="field-value" style="margin-top:18px;">{html_table_2}</div>
             </div>
         </div>
@@ -236,7 +230,9 @@ def render_view_report():
           <span class="field-label">Actionable Items:</span>
           <span class="field-value">{record.iat[0, 12]}</span>
         </div>
+        <p style="color: black;text-align:center;margin-top:50px;font-weight: bold;">Printed on: {formatted_datetime}</p>
       </div>
+      
     </body>
     </html>
     """

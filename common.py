@@ -60,11 +60,17 @@ def session_settings():
         st.session_state.is_manager = False
         st.session_state.is_manager = is_user_manager(2)
     if 'client_name' not in st.session_state:
-        st.session_state.client_name = "c1"
+        st.session_state.client_name = ""
     if 'client_SOT' not in st.session_state:
-        st.session_state.client_SOT = "0"
+        st.session_state.client_SOT = ""
     if 'client_outstanding' not in st.session_state:
-        st.session_state.client_outstanding = "nothing"
+        st.session_state.client_outstanding = ""
+    if 'client_ref' not in st.session_state:
+        st.session_state.client_ref = ""
+    if 'client_cr' not in st.session_state:
+        st.session_state.client_cr = ""
+    if 'client_risk_rating' not in st.session_state:
+        st.session_state.client_risk_rating = 0
 
 
 def page_settings():

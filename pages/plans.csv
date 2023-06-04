@@ -1,36 +1,36 @@
-id,rm_name,client_cif,client_name,client_sot,client_outstanding,purpose_of_call,expected_call_date
-1,John Deo,75,Asruid,1000000,outstanding 1,purpose 1,24/05/2023
-2,Max Ruin,85,Tes Qry,1000000,outstanding 2,purpose 2,25/05/2024
-3,Arnold,55,Big John,1000000,outstanding 3,purpose 3,24/05/2025
-4,Krish Star,60,Ronald,1000000,outstanding 4,purpose 4,24/05/2026
-5,John Mike,60,Recky,1000000,outstanding 5,purpose 5,24/05/2027
-6,Alex John,55,Kty,1000000,outstanding 6,purpose 6,24/05/2028
-7,My John Rob,78,Bigy,1000000,outstanding 7,purpose 7,24/05/2029
-8,Asruid,85,Tade Row,1000000,outstanding 8,purpose 8,24/05/2030
-9,Tes Qry,78,Gimmy,1000000,outstanding 9,purpose 9,24/05/2031
-10,Big John,55,Tumyu,1000000,outstanding 10,purpose 10,24/05/2032
-11,Ronald,89,Honny,1000000,outstanding 11,purpose 11,24/05/2033
-12,Recky,94,Tinny,1000000,outstanding 12,purpose 12,24/05/2034
-13,Kty,88,Jackly,1000000,outstanding 13,purpose 13,24/05/2035
-14,Bigy,88,Asruid,1000000,outstanding 14,purpose 14,24/05/2036
-15,Tade Row,88,Tes Qry,1000000,outstanding 15,purpose 15,24/05/2037
-16,Gimmy,88,Big John,1000000,outstanding 16,purpose 16,24/05/2038
-17,Tumyu,54,Ronald,1000000,outstanding 17,purpose 17,24/05/2039
-18,Honny,75,Recky,1000000,outstanding 18,purpose 18,24/05/2040
-19,Tinny,18,Kty,1000000,outstanding 19,purpose 19,24/05/2041
-20,Jackly,65,Bigy,1000000,outstanding 20,purpose 20,24/05/2042
-21,Babby John,69,Tade Row,1000000,outstanding 21,purpose 21,24/05/2043
-22,Reggid,55,Gimmy,1000000,outstanding 22,purpose 22,24/05/2044
-23,Herod,79,Tumyu,1000000,outstanding 23,purpose 23,24/05/2045
-24,Tiddy Now,78,Honny,1000000,outstanding 24,purpose 24,24/05/2046
-25,Giff Tow,88,Tinny,1000000,outstanding 25,purpose 25,24/05/2047
-26,Crelea,79,Jackly,1000000,outstanding 26,purpose 26,24/05/2048
-27,Big Nose,81,Asruid,1000000,outstanding 27,purpose 27,24/05/2049
-28,Rojj Base,86,Tes Qry,1000000,outstanding 28,purpose 28,24/05/2050
-29,Tess Played,55,Big John,1000000,outstanding 29,purpose 29,24/05/2051
-30,Reppy Red,79,Ronald,1000000,outstanding 30,purpose 30,24/05/2052
-31,Marry Toeey,88,Recky,1000000,outstanding 31,purpose 31,24/05/2053
-32,Binn Rott,90,Kty,1000000,outstanding 32,purpose 32,24/05/2054
-33,Kenn Rein,96,Bigy,1000000,outstanding 33,purpose 33,24/05/2055
-34,Gain Toe,69,Tade Row,1000000,outstanding 34,purpose 34,24/05/2056
-35,Rows Noump,88,Gimmy,1000000,outstanding 35,purpose 35,24/05/2057
+id,status,rm_name,client_cif,client_name,client_sot,client_outstanding,purpose_of_call,expected_call_date
+1,Pending,John Deo,75,Asruid,1000000,outstanding 1,purpose 1,24/05/2023
+2,Completed,Max Ruin,85,Tes Qry,1000000,outstanding 2,purpose 2,25/05/2024
+3,Pending,Arnold,55,Big John,1000000,outstanding 3,purpose 3,24/05/2025
+4,Pending,Krish Star,60,Ronald,1000000,outstanding 4,purpose 4,24/05/2026
+5,Pending,John Mike,60,Recky,1000000,outstanding 5,purpose 5,24/05/2027
+6,Pending,Alex John,55,Kty,1000000,outstanding 6,purpose 6,24/05/2028
+7,Pending,My John Rob,78,Bigy,1000000,outstanding 7,purpose 7,24/05/2029
+8,Pending,Asruid,85,Tade Row,1000000,outstanding 8,purpose 8,24/05/2030
+9,Pending,Tes Qry,78,Gimmy,1000000,outstanding 9,purpose 9,24/05/2031
+10,Completed,Big John,55,Tumyu,1000000,outstanding 10,purpose 10,24/05/2032
+11,Completed,Ronald,89,Honny,1000000,outstanding 11,purpose 11,24/05/2033
+12,Completed,Recky,94,Tinny,1000000,outstanding 12,purpose 12,24/05/2034
+13,Completed,Kty,88,Jackly,1000000,outstanding 13,purpose 13,24/05/2035
+14,Completed,Bigy,88,Asruid,1000000,outstanding 14,purpose 14,24/05/2036
+15,Completed,Tade Row,88,Tes Qry,1000000,outstanding 15,purpose 15,24/05/2037
+16,Completed,Gimmy,88,Big John,1000000,outstanding 16,purpose 16,24/05/2038
+17,Completed,Tumyu,54,Ronald,1000000,outstanding 17,purpose 17,24/05/2039
+18,Completed,Honny,75,Recky,1000000,outstanding 18,purpose 18,24/05/2040
+19,Completed,Tinny,18,Kty,1000000,outstanding 19,purpose 19,24/05/2041
+20,Completed,Jackly,65,Bigy,1000000,outstanding 20,purpose 20,24/05/2042
+21,Completed,Babby John,69,Tade Row,1000000,outstanding 21,purpose 21,24/05/2043
+22,Completed,Reggid,55,Gimmy,1000000,outstanding 22,purpose 22,24/05/2044
+23,Completed,Herod,79,Tumyu,1000000,outstanding 23,purpose 23,24/05/2045
+24,Completed,Tiddy Now,78,Honny,1000000,outstanding 24,purpose 24,24/05/2046
+25,Completed,Giff Tow,88,Tinny,1000000,outstanding 25,purpose 25,24/05/2047
+26,Completed,Crelea,79,Jackly,1000000,outstanding 26,purpose 26,24/05/2048
+27,Completed,Big Nose,81,Asruid,1000000,outstanding 27,purpose 27,24/05/2049
+28,Completed,Rojj Base,86,Tes Qry,1000000,outstanding 28,purpose 28,24/05/2050
+29,Completed,Tess Played,55,Big John,1000000,outstanding 29,purpose 29,24/05/2051
+30,Completed,Reppy Red,79,Ronald,1000000,outstanding 30,purpose 30,24/05/2052
+31,Completed,Marry Toeey,88,Recky,1000000,outstanding 31,purpose 31,24/05/2053
+32,Completed,Binn Rott,90,Kty,1000000,outstanding 32,purpose 32,24/05/2054
+33,Completed,Kenn Rein,96,Bigy,1000000,outstanding 33,purpose 33,24/05/2055
+34,Completed,Gain Toe,69,Tade Row,1000000,outstanding 34,purpose 34,24/05/2056
+35,Completed,Rows Noump,88,Gimmy,1000000,outstanding 35,purpose 35,24/05/2057

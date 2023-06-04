@@ -5,11 +5,11 @@ import streamlit as st
 from st_aggrid import AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 class Person:
-    def __init__(self, name, title, department, phone):
+    def __init__(self, name, title):
         self.name = name
         self.title = title
-        self.department = department
-        self.phone = phone
+        # self.department = department
+        # self.phone = phone
 
 
 def person_to_dict(person):
@@ -24,9 +24,9 @@ def person_to_dict(person):
        """
     return {
         "name": person.name,
-        "title": person.title,
-        "department": person.department,
-        "phone": person.phone
+        "title": person.title
+        # "department": person.department,
+        # "phone": person.phone
     }
 def json_to_dataframe(json_data):
     """
@@ -52,7 +52,7 @@ def get_base64_of_bin_file(bin_file):
 
 
 
-def show_grid(addurl, editurl,  df):
+def show_grid(addurl, editurl,  df, cellsytle_jscode):
     edit_column = df['id'].copy()
     edit_column.rename('edit', inplace=True)
     # df_new = pd.concat([new_column, df], axis=1)
@@ -70,7 +70,7 @@ def show_grid(addurl, editurl,  df):
     gd.configure_column( "id", "View", cellRenderer=JsCode(id_injectJs))
     gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
     # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
-    # gd.configure_column("class", cellStyle=cellsytle_jscode)
+    gd.configure_column("status", cellStyle=cellsytle_jscode)
     gd.configure_side_bar(filters_panel=True)
 
     gd.configure_columns(df_new.columns, width=30)

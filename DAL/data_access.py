@@ -35,13 +35,16 @@ def get_rms_list(userid):
 def fetch_client_data(cif):
     #fetch the values from DB
     cn = st.session_state.client_name = "Ericson Telecom"
-    sot = st.session_state.client_SOT = "4000"
+    sot = st.session_state.client_SOT = "100000"
     out = st.session_state.client_outstanding = "Some outstanding data fetched"
+    cr = st.session_state.client_cr = "53342342332"
+    risk_rating = st.session_state.client_risk_rating = 6
     data = {
         'Client CIF': cif,
         'Client Name': cn,
         'Client SOT': sot,
-        'Client Outstanding': out
+        'Client Outstanding': out,
+        "Risk Rating": risk_rating
     }
 
     data2 = [data] #to convert to dataframe
@@ -99,16 +102,19 @@ def get_report_by_id(id):
     return json_data
 def getStaffList():
     person_list_1 = [
-        Person("John Doe", "Manager", "MIS", "123123123"),
-        Person("Jane Smith", "Engineer", "MIS", "123123123"),
-        Person("Mike Johnson", "Analyst", "MIS" ,"123123123")
+        Person("John Doe", "Manager"),
+        Person("Jane Smith", "Engineer"),
+        Person("Mike Johnson", "Analyst"),
+        Person("John Doe", "Manager"),
+        Person("Jane Smith", "Engineer"),
+        Person("Mike Johnson", "Analyst")
     ]
     return person_list_1
 def getClientsList():
     person_list_2 = [
-        Person("Alice Johnson", "Designer","MIS","123123123"),
-        Person("Mark Davis", "Developer","MIS","123123123"),
-        Person("Emily Brown", "Project Manager","MIS","123123123")
+        Person("Alice Johnson", "Designer"),
+        Person("Mark Davis", "Developer"),
+        Person("Emily Brown", "Project Manager")
     ]
     return person_list_2
 
