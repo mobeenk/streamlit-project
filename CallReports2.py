@@ -3,7 +3,7 @@ from datetime import datetime, date
 from pathlib import Path
 from navbar import *
 from common import *
-from reportingPDF import export_reports_to_PDF
+from reportingPDF import  PDF, objects
 from utility import *
 from popup import *
 from DAL.data_access import *
@@ -39,7 +39,7 @@ def main():
         page_settings()
 
 
-        menu_list = ["Call Plans", "Call Reports"]
+        menu_list = ["Call Plans", "Call Reports","Reporting"]
         navmenu_selected = Navbar2(menu_list)
 
         def call_plan_page():
@@ -355,6 +355,7 @@ def main():
         # ✍️ ✏️👁️✏️❌👁‍🗨
 
         # Nav bar on selection
+
         if navmenu_selected == 'Call Plans':
             call_plan_page()
             grid_title = "My Call Plans"
@@ -391,11 +392,18 @@ def main():
             #     df = load_data('pages/callreports.csv')
             df = load_data('pages/callreports.csv')
             callReportGrid(df, cellsytle_jscode)
+        if navmenu_selected == 'Reporting':
+            st.write('Some Filters goes here by date then generate the reporting')
+            if st.button("Generate Reports"):
+                pdf = PDF()
+                # pdf.generate_report(objects)
+                html = pdf.generate_report(objects)
+                st.markdown(html, unsafe_allow_html=True)
 
 
 if __name__ == '__main__':
     main()
-    export_reports_to_PDF(1)
+
     #
     # with col1:
     #     st.header("Clients List")
