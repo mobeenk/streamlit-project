@@ -176,9 +176,9 @@ def page_footer():
                 <div class="footer">
                     
                     <p class="footer-links">
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Contact</a>
+                        <a href="https://google.com" target="_blank">Terms of Service</a>
+                        <a href="https://google.com" target="_blank">Privacy Policy</a>
+                        <a href="https://google.com" target="_blank">Contact</a>
                     </p>
                     <p class="footer-text">©2023 All rights reserved.</p>
                 </div>
