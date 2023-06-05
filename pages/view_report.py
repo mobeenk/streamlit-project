@@ -1,10 +1,12 @@
 import sys
 from pathlib import Path
 from common import *
+from components import admin_approval_component
 from utility import *
 import streamlit as st
 from DAL.data_access import getStaffList, getClientsList, view_report_by_id
 import datetime
+import streamlit.components.v1 as components
 
 general_settings()
 print_date = datetime.datetime.now()
@@ -242,4 +244,11 @@ def render_view_report():
 
 
 # only if authorized open the page
-is_authorized(render_view_report)
+result = is_authorized(render_view_report)
+
+if result is not None:
+    token = get_query_param_by_name('token')
+    userId, token_expiry, username = get_user_claims(token)
+    extracted_value = get_query_param_by_name('id')
+    if is_user_manager(userId):
+        components.html(admin_approval_component(extracted_value))

@@ -39,7 +39,7 @@ def get_user_claims(token):
         # token_expiry_date = datetime.fromtimestamp(read_jwt_token(token)[1])
         return user_id, read_jwt_token(token)[1], read_jwt_token(token)[2]
     else:
-        return None, None
+        return None, None, None
 
 
 # CALLREPORT_REMOVE_URL = "http://localhost:8502/remove?q="
@@ -55,10 +55,10 @@ def general_settings():
     )
 
 
-def session_settings():
+def session_settings(loggedUserId):
     if 'is_manager' not in st.session_state:
         st.session_state.is_manager = False
-        st.session_state.is_manager = is_user_manager(2)
+        st.session_state.is_manager = is_user_manager(loggedUserId)
     if 'client_name' not in st.session_state:
         st.session_state.client_name = ""
     if 'client_SOT' not in st.session_state:
@@ -109,10 +109,13 @@ def is_authorized(exce_func):
         if not is_valid_jwt(token, TOKEN_KEY):
             st.markdown(notfound_page("Unauthorized-401"), unsafe_allow_html=True)
             print('not valid token')
+            return None
         elif token_expiry is None:
             st.markdown(notfound_page("Session Expired"), unsafe_allow_html=True)
+            return None
         else:
             exce_func()
+            return 1
 
     except Exception as e:
         # Exception handling code

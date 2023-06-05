@@ -59,27 +59,35 @@ def get_base64_of_bin_file(bin_file):
 
 
 def show_grid(addurl, editurl, df, cellsytle_jscode):
-    edit_column = df['id'].copy()
-    edit_column.rename('edit', inplace=True)
+    # edit_column = df['id'].copy()
+    # edit_column.rename('edit', inplace=True)
+    # pks = df['id'].copy()
     # df_new = pd.concat([new_column, df], axis=1)
 
     # remove_column = df['id'].copy()
     # remove_column.rename('remove', inplace=True)
-    df_new = pd.concat([edit_column, df], axis=1)
+    # df_new = pd.concat([edit_column, df], axis=1)
+
+    df['pk'] = df['id'].copy()
+    df['edit'] = df['id'].copy()
+    # pks.rename('pk', inplace=True)
+
+    # df_new = pd.concat([pks, df], axis=1)
+    # df_new = pd.concat([edit_column, df], axis=1)
 
     id_injectJs = InjectJSCode(addurl, "👁️")
     edit_injectJs = InjectJSCode(editurl, "️✏️")
     # remove_injectJs = InjectJSCode(removeurl, "️❌")
 
-    gd = GridOptionsBuilder.from_dataframe(df_new)
+    gd = GridOptionsBuilder.from_dataframe(df)
     gd.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
-    gd.configure_column("id", "View", cellRenderer=JsCode(id_injectJs))
+    gd.configure_column("pk", "View", cellRenderer=JsCode(id_injectJs))
     gd.configure_column("edit", "Edit", cellRenderer=JsCode(edit_injectJs))
     # gd.configure_column("remove", "Edit", cellRenderer=JsCode(remove_injectJs))
     gd.configure_column("status", cellStyle=cellsytle_jscode)
     gd.configure_side_bar(filters_panel=True)
 
-    gd.configure_columns(df_new.columns, width=30)
+    gd.configure_columns(df.columns, width=30)
     gd.configure_column("id", width=20)
     gd.configure_column("edit", width=20)
     # gd.configure_default_column(editable=True, groupable=True)
@@ -89,7 +97,7 @@ def show_grid(addurl, editurl, df, cellsytle_jscode):
     custom_css = {
         ".ag-row-hover": {"background-color": " #C09C20 !important"},
     }
-    AgGrid(df_new
+    AgGrid(df
            , gridOptions=gdOptions
            , allow_unsafe_jscode=True
            , enable_enterprise_modules=True

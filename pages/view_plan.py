@@ -146,7 +146,7 @@ def render_plan():
     # /* top, right, bottom, left */
     is_admin = True
     # if is_admin:
-    components.html(admin_approval_component(extracted_value))
+    # components.html(admin_approval_component(extracted_value))
 
 
 # only if authorized open the page

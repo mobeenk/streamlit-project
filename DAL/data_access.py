@@ -28,7 +28,7 @@ def get_rms_list(userid):
     # CHOICES = {1: "dataset a", 2: "dataset b", 3: "dataset c"}
     # selected_rm = st.selectbox("Select option", CHOICES.keys(), format_func = lambda x: CHOICES[x])
     # st.write(f"You selected option {selected_rm} ")
-    result = [{11: "dataset a"}, {22: "dataset b"}, {33: "dataset c"}]
+    result = [{11: "Ahmad Sammer"}, {22: "Jonny b"}, {33: "Omar c"}]
     return result
 
 
