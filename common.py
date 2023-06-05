@@ -84,6 +84,8 @@ def page_settings():
         { font-size: 22px !important; font-weight: bold !important; }
         #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div
         { margin-top:-60px; }
+        #root > div:nth-child(1) > div.withScreencast > div > div > div > section.main.css-uf99v8.egzxvld5 > div.block-container.css-z5fcl4.egzxvld4 > div:nth-child(1) > div > div:nth-child(8) > iframe
+        { margin-top:20px; }
         </style>
         """
     st.markdown(hide_menu_style, unsafe_allow_html=True)

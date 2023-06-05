@@ -168,7 +168,7 @@ def render_view_report():
       </style>
     </head>
     <body>
-      <div class="report" style="background: radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);;border-radius:10px; box-shadow: 0 8px 6px -6px black;">
+      <div class="report" style="background-color: #FFFFD5">
         <div class="report-header">Call Report View</div>
         <div class="report-columns">
           <div class="report-field">
@@ -252,3 +252,7 @@ if result is not None:
     extracted_value = get_query_param_by_name('id')
     if is_user_manager(userId):
         components.html(admin_approval_component(extracted_value))
+
+
+
+# radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);;border-radius:10px; box-shadow: 0 8px 6px -6px black;

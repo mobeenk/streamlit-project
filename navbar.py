@@ -99,7 +99,7 @@ def page_head(id, token_expiry, username):
           justify-content: space-between;
           align-items: stretch;
           align-content: normal;
-          background-color: white; 
+          background-color: #FFFFD5; 
           border-radius: 10px;
           margin-bottom: -50px;
         }}
@@ -115,7 +115,7 @@ def page_head(id, token_expiry, username):
         }}
         .bg {{
             background: rgb(240,240,207);
-            background: linear-gradient(221deg, rgba(240,240,207,1) 0%, rgba(255,255,255,1) 100%);
+            background: linear-gradient(221deg, #FFFFD5 0%, #FFFFD5 100%);
             index:-5;
             margin:10px; 
             border-radius: 15px;
@@ -141,6 +141,51 @@ def page_head(id, token_expiry, username):
     """
     return html_css_page
 
+
+def page_footer():
+    footer_html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                .footer {
+                    background-color: #FFFFD5;
+                    padding: 10px;
+                    text-align: center;
+                    border-bottom-left-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+                .footer-text {
+                    color: #555;
+                    font-size: 12px;
+                }
+                .footer-links a {
+                    margin: 0 10px;
+                    color: #555;
+                    text-decoration: none;
+                }
+                .footer-links a:hover {
+                    color: white;
+                    background-color: #C09C20;
+                    padding: 6px;
+                    border-radius: 5px;
+                }
+                </style>
+            </head>
+            <body>
+                <div class="footer">
+                    
+                    <p class="footer-links">
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Contact</a>
+                    </p>
+                    <p class="footer-text">©2023 All rights reserved.</p>
+                </div>
+            </body>
+            </html>
+        """
+    return footer_html
 
 def notfound_page(title):
     html_css_page = f"""
