@@ -9,7 +9,8 @@ def is_user_manager(userid):
 
     return bool(random.getrandbits(1))
 
-
+def get_plans_by_userid(userid):
+    return ['100', '200', '300']
 def get_departments():
     pass
 
@@ -93,8 +94,30 @@ def get_report_by_id(id):
         "client_type": "client_type",
         "referenced_by": "referenced_by",
         "the_place": "the_place",
-        "called_list": [],
-        "calling_list": [],
+        "called_list": [
+                            {
+                            "name":"sdsd",
+                            "title":"sd"
+                            }
+                            ,{
+                            "name":"sd",
+                            "title":"sd"
+                            }
+                     , {
+                    "name": "sd",
+                    "title": "sd"
+                }
+        ],
+        "calling_list": [
+            {
+                "name": "staff1",
+                "title": "CEO"
+            }
+            , {
+                "name": "Staff2",
+                "title": "M"
+            }
+        ],
         "call_objective": "call_objective",
         "points_of_discusstion": "points_of_discusstion",
         "actionable_items": "actionable_items",

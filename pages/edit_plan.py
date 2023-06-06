@@ -22,14 +22,15 @@ def render_edit_page():
     if 'jsonobj' not in st.session_state:
         st.session_state.jsonobj = {}
 
-    client_cif = r1c1.text_input("Client CIF :", value=record['client_cif'], label_visibility="collapsed")
-    if r1c2.button("Fetch Client Data"):
+    client_cif = r1c1.text_input("Client CIF :", value=record['client_cif'], label_visibility="collapsed", disabled=True)
+    if r1c2.button("Show Client Info"):
         st.session_state.jsonobj = fetch_client_data(client_cif)
         # st.json(data)
         # st.write(jsonobj['Client CIF'])
 
-    index = get_purpose_options().index(record['purpose'])
-    purpose = st.selectbox("Purpose", get_purpose_options(), key='purposethis', index=index)
+    # index = get_purpose_options().index(record['purpose'])
+    # purpose = st.selectbox("Purpose", get_purpose_options(), key='purposethis', index=index)
+    purpose = st.text_input("Purpose", value=record['purpose'], key='purposethis')
 
     default_date_str = record['expected_call_date']  # Date string
     default_date = datetime.datetime.strptime(default_date_str, '%Y-%m-%d').date()

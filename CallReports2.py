@@ -267,37 +267,31 @@ def main():
 
                     if st.session_state.btn_submit_report == False:
                         if st.form_submit_button("Save & Submit"): #st.button(label='Save & Submit'):
-                            if client_name1 != "" and client_title1 != "":
-                                client1 = Person(client_name1, client_title1)
-                                st.session_state.person_list.append(client1)
-                            if client_name2 != "" and client_title2 != "":
-                                client2 = Person(client_name2, client_title2)
-                                st.session_state.person_list.append(client2)
-                            if client_name3 != "" and client_title3 != "":
-                                client3 = Person(client_name3, client_title3)
-                                st.session_state.person_list.append(client3)
-                            if client_name4 != "" and client_title4 != "":
-                                client4 = Person(client_name4, client_title4)
-                                st.session_state.person_list.append(client4)
-                            if client_name5 != "" and client_title5 != "":
-                                client5 = Person(client_name5, client_title5)
-                                st.session_state.person_list.append(client5)
-                            #     ############# STAFF
-                            if staff_name1 != "" and staff_title1 != "":
-                                staff1 = Person(staff_name1, staff_title1)
-                                st.session_state.staff_list.append(staff1)
-                            if staff_name2 != "" and staff_title2 != "":
-                                staff2 = Person(staff_name2, staff_title2)
-                                st.session_state.staff_list.append(staff2)
-                            if staff_name3 != "" and staff_title3 != "":
-                                staff3 = Person(staff_name3, staff_title3)
-                                st.session_state.staff_list.append(staff3)
-                            if staff_name4 != "" and staff_title4 != "":
-                                staff4 = Person(staff_name4, staff_title4)
-                                st.session_state.staff_list.append(staff4)
-                            if staff_name5 != "" and staff_title5 != "":
-                                staff5 = Person(staff_name5, staff_title5)
-                                st.session_state.staff_list.append(staff5)
+                            clients = [
+                                (client_name1, client_title1),
+                                (client_name2, client_title2),
+                                (client_name3, client_title3),
+                                (client_name4, client_title4),
+                                (client_name5, client_title5)
+                            ]
+
+                            staff = [
+                                (staff_name1, staff_title1),
+                                (staff_name2, staff_title2),
+                                (staff_name3, staff_title3),
+                                (staff_name4, staff_title4),
+                                (staff_name5, staff_title5)
+                            ]
+
+                            for name, title in clients:
+                                if name != "" and title != "":
+                                    client = Person(name, title)
+                                    st.session_state.person_list.append(client)
+
+                            for name, title in staff:
+                                if name != "" and title != "":
+                                    staff_member = Person(name, title)
+                                    st.session_state.staff_list.append(staff_member)
 
                             # st.write(st.session_state.person_list)
                             json_obj = report_plan_json(

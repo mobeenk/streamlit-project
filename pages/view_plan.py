@@ -107,38 +107,42 @@ def render_plan():
     </head>
     <body>
       <div class="report">
-        <div class="report-header">Plan View</div>
+        <div class="report-header">{record.iat[0, 1]}</div>
         <div class="report-field">
-          <span class="field-label">RM:</span>
+          <span class="field-label">Plan Id</span>
           <span class="field-value">{record.iat[0, 0]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Client Name:</span>
-          <span class="field-value">{record.iat[0, 1]}</span>
-        </div>
-        <div class="report-field">
-          <span class="field-label">Client CIF:</span>
+          <span class="field-label">RM:</span>
           <span class="field-value">{record.iat[0, 2]}</span>
         </div>
         <div class="report-field">
           <span class="field-label">Client Name:</span>
+          <span class="field-value">{record.iat[0, 4]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Client CIF:</span>
           <span class="field-value">{record.iat[0, 3]}</span>
         </div>
         <div class="report-field">
           <span class="field-label">Client SOT:</span>
-          <span class="field-value">{record.iat[0, 4]}</span>
-        </div>
-        <div class="report-field">
-          <span class="field-label">Outstanding:</span>
           <span class="field-value">{record.iat[0, 5]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Purpose:</span>
+          <span class="field-label">Outstanding:</span>
           <span class="field-value">{record.iat[0, 6]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Expected Call Date:</span>
+          <span class="field-label">Purpose:</span>
           <span class="field-value">{record.iat[0, 7]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Plan Date:</span>
+          <span class="field-value">{record.iat[0, 8]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Risk Rating:</span>
+          <span class="field-value">{record.iat[0, 9]}</span>
         </div>
       </div>
     </body>

@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import pandas as pd
-from DAL.data_access import get_rm_clients, get_report_by_id
+from DAL.data_access import get_rm_clients, get_report_by_id, get_plans_by_userid
 from common import *
 import streamlit as st
 
@@ -56,12 +56,14 @@ def report_plan_json(
 
 def render_edit_report():
 
+
     extracted_id = get_query_param_by_name('id')
     plan_data = get_report_by_id(extracted_id)
     record = json.loads(plan_data)
+    print(record['called_list'][0]['title'])
     st.markdown(f"<h3>Client Details</h3>", unsafe_allow_html=True)
     with st.form('myform'):
-        plan_id = st.selectbox("Select Plan Id", ['100', '200', '300'])
+        plan_id = st.selectbox("Select Plan Id", get_plans_by_userid(userId), disabled=True)
 
         r1c1, r1c2 = st.columns(2)
         report_date = r1c1.date_input("Report Date", key="rep_date", min_value=datetime.today(),
@@ -101,6 +103,9 @@ def render_edit_report():
         staff_title3 = ""
         staff_title4 = ""
         staff_title5 = ""
+
+
+
         with col_clients:
             st.markdown("<p>Clients list</p>", unsafe_allow_html=True)
             c, c1, c2 = st.columns([1, 7, 7])
@@ -114,19 +119,54 @@ def render_edit_report():
 
             with c1:
                 st.markdown("<p>Name</p>", unsafe_allow_html=True)
-                client_name1 = st.text_input("", value='', key="cn1", label_visibility="collapsed")
-                client_name2 = st.text_input("", value='', key="cn2", label_visibility="collapsed")
-                client_name3 = st.text_input("", value='', key="cn3", label_visibility="collapsed")
-                client_name4 = st.text_input("", value='', key="cn4", label_visibility="collapsed")
-                client_name5 = st.text_input("", value='', key="cn5", label_visibility="collapsed")
+                cases = [
+                    (0, 'cn1'),
+                    (1, 'cn2'),
+                    (2, 'cn3'),
+                    (3, 'cn4'),
+                    (4, 'cn5')
+                ]
+                input_values = {}  # Dictionary to store the input values
+                for index, key in cases:
+                    if 'called_list' in record and len(record['called_list']) > index:
+                        name = record['called_list'][index]['name']
+                    else:
+                        name = ""
+                    value = st.text_input("", value=name, key=key, label_visibility="collapsed")
+                    input_values[key] = value  # Store the value in the dictionary
+                # Access the input values separately
+                client_name1 = input_values['cn1']
+                client_name2 = input_values['cn2']
+                client_name3 = input_values['cn3']
+                client_name4 = input_values['cn4']
+                client_name5 = input_values['cn5']
 
             with c2:
                 st.markdown("<p>Designation</p>", unsafe_allow_html=True)
-                client_title1 = st.text_input("", value='', key="ct1", label_visibility="collapsed")
-                client_title2 = st.text_input("", value='', key="ct2", label_visibility="collapsed")
-                client_title3 = st.text_input("", value='', key="ct3", label_visibility="collapsed")
-                client_title4 = st.text_input("", value='', key="ct4", label_visibility="collapsed")
-                client_title5 = st.text_input("", value='', key="ct5", label_visibility="collapsed")
+                cases = [
+                    (0, 'ct1'),
+                    (1, 'ct2'),
+                    (2, 'ct3'),
+                    (3, 'ct4'),
+                    (4, 'ct5')
+                ]
+
+                input_values = {}  # Dictionary to store the input values
+
+                for index, key in cases:
+                    if 'called_list' in record and len(record['called_list']) > index:
+                        title = record['called_list'][index]['title']
+                    else:
+                        title = ""
+                    value = st.text_input("", value=title, key=key, label_visibility="collapsed")
+                    input_values[key] = value  # Store the value in the dictionary
+
+                # Access the input values separately
+                client_title1 = input_values['ct1']
+                client_title2 = input_values['ct2']
+                client_title3 = input_values['ct3']
+                client_title4 = input_values['ct4']
+                client_title5 = input_values['ct5']
 
         with col_staff:
             st.markdown("<p>Staff list</p>", unsafe_allow_html=True)
@@ -134,19 +174,51 @@ def render_edit_report():
 
             with c1:
                 st.markdown("<p>Name</p>", unsafe_allow_html=True)
-                staff_name1 = st.text_input("", value='', key="sn1", label_visibility="collapsed")
-                staff_name2 = st.text_input("", value='', key="sn2", label_visibility="collapsed")
-                staff_name3 = st.text_input("", value='', key="sn3", label_visibility="collapsed")
-                staff_name4 = st.text_input("", value='', key="sn4", label_visibility="collapsed")
-                staff_name5 = st.text_input("", value='', key="sn5", label_visibility="collapsed")
+                cases = [
+                    (0, 'sn1'),
+                    (1, 'sn2'),
+                    (2, 'sn3'),
+                    (3, 'sn4'),
+                    (4, 'sn5')
+                ]
+                input_values = {}  # Dictionary to store the input values
+                for index, key in cases:
+                    if 'calling_list' in record and len(record['calling_list']) > index:
+                        name = record['calling_list'][index]['name']
+                    else:
+                        name = ""
+                    value = st.text_input("", value=name, key=key, label_visibility="collapsed")
+                    input_values[key] = value  # Store the value in the dictionary
+                # Access the input values separately
+                staff_name1 = input_values['sn1']
+                staff_name2 = input_values['sn2']
+                staff_name3 = input_values['sn3']
+                staff_name4 = input_values['sn4']
+                staff_name5 = input_values['sn5']
 
             with c2:
                 st.markdown("<p>Designation</p>", unsafe_allow_html=True)
-                staff_title1 = st.text_input("", value='', key="st1", label_visibility="collapsed")
-                staff_title2 = st.text_input("", value='', key="st2", label_visibility="collapsed")
-                staff_title3 = st.text_input("", value='', key="st3", label_visibility="collapsed")
-                staff_title4 = st.text_input("", value='', key="st4", label_visibility="collapsed")
-                staff_title5 = st.text_input("", value='', key="st5", label_visibility="collapsed")
+                cases = [
+                    (0, 'st1'),
+                    (1, 'st2'),
+                    (2, 'st3'),
+                    (3, 'st4'),
+                    (4, 'st5')
+                ]
+                input_values = {}  # Dictionary to store the input values
+                for index, key in cases:
+                    if 'calling_list' in record and len(record['calling_list']) > index:
+                        name = record['calling_list'][index]['title']
+                    else:
+                        name = ""
+                    value = st.text_input("", value=name, key=key, label_visibility="collapsed")
+                    input_values[key] = value  # Store the value in the dictionary
+                # Access the input values separately
+                staff_title1 = input_values['st1']
+                staff_title2 = input_values['st2']
+                staff_title3 = input_values['st3']
+                staff_title4 = input_values['st4']
+                staff_title5 = input_values['st5']
 
         # st.markdown(f"<h3>Agenda Details 📒</h3>", unsafe_allow_html=True)
         call_objective = st.text_area("Objective of the call", height=100, value="call pbjective")
@@ -164,37 +236,31 @@ def render_edit_report():
 
         if st.session_state.btn_submit_report == False:
             if st.form_submit_button("Save & Update"):  # st.button(label='Save & Submit'):
-                if client_name1 != "" and client_title1 != "":
-                    client1 = Person(client_name1, client_title1)
-                    st.session_state.person_list.append(client1)
-                if client_name2 != "" and client_title2 != "":
-                    client2 = Person(client_name2, client_title2)
-                    st.session_state.person_list.append(client2)
-                if client_name3 != "" and client_title3 != "":
-                    client3 = Person(client_name3, client_title3)
-                    st.session_state.person_list.append(client3)
-                if client_name4 != "" and client_title4 != "":
-                    client4 = Person(client_name4, client_title4)
-                    st.session_state.person_list.append(client4)
-                if client_name5 != "" and client_title5 != "":
-                    client5 = Person(client_name5, client_title5)
-                    st.session_state.person_list.append(client5)
-                #     ############# STAFF
-                if staff_name1 != "" and staff_title1 != "":
-                    staff1 = Person(staff_name1, staff_title1)
-                    st.session_state.staff_list.append(staff1)
-                if staff_name2 != "" and staff_title2 != "":
-                    staff2 = Person(staff_name2, staff_title2)
-                    st.session_state.staff_list.append(staff2)
-                if staff_name3 != "" and staff_title3 != "":
-                    staff3 = Person(staff_name3, staff_title3)
-                    st.session_state.staff_list.append(staff3)
-                if staff_name4 != "" and staff_title4 != "":
-                    staff4 = Person(staff_name4, staff_title4)
-                    st.session_state.staff_list.append(staff4)
-                if staff_name5 != "" and staff_title5 != "":
-                    staff5 = Person(staff_name5, staff_title5)
-                    st.session_state.staff_list.append(staff5)
+                clients = [
+                    (client_name1, client_title1),
+                    (client_name2, client_title2),
+                    (client_name3, client_title3),
+                    (client_name4, client_title4),
+                    (client_name5, client_title5)
+                ]
+
+                staff = [
+                    (staff_name1, staff_title1),
+                    (staff_name2, staff_title2),
+                    (staff_name3, staff_title3),
+                    (staff_name4, staff_title4),
+                    (staff_name5, staff_title5)
+                ]
+
+                for name, title in clients:
+                    if name != "" and title != "":
+                        client = Person(name, title)
+                        st.session_state.person_list.append(client)
+
+                for name, title in staff:
+                    if name != "" and title != "":
+                        staff_member = Person(name, title)
+                        st.session_state.staff_list.append(staff_member)
 
                 # st.write(st.session_state.person_list)
                 json_obj = report_plan_json(
