@@ -216,5 +216,8 @@ def render_edit_report():
             st.warning("Already Submitted a report, Refresh the page to submit a new report")
 
 
-# only if authorized open the page
-is_authorized(render_edit_report)
+if is_token_authorized():
+    render_edit_report()
+else:
+    st.markdown(notfound_page("You are not authorized to edit this report "), unsafe_allow_html=True)
+

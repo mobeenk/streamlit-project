@@ -1,7 +1,9 @@
 import sys
 from pathlib import Path
+import random
+
 from common import *
-from components import admin_approval_component
+from components import admin_approval_component, owner_action_component
 from utility import *
 import streamlit as st
 from DAL.data_access import getStaffList, getClientsList, view_report_by_id
@@ -12,13 +14,16 @@ general_settings()
 print_date = datetime.datetime.now()
 formatted_datetime = print_date.strftime("%Y-%m-%d %H:%M:%S")
 
-def render_view_report():
-    # Use Font Awesome icons in your Streamlit app
-    # st.markdown('<i class="fas fa-star"></i>', unsafe_allow_html=True)
-    extracted_value = get_query_param_by_name('id')
-    df = view_report_by_id(extracted_value)  # pd.read_csv("pages/callreports.csv")
+def get_report():
+    report_id = get_query_param_by_name('id')
+    df = view_report_by_id(report_id)
+    record = df.query(f"id == {report_id}")
+    return record
 
-    record = df.query(f"id == {extracted_value}")
+def render_view_report():
+    record = get_report()
+    # must get rm_id and check if this user is an admin and a manager of this rm to take action on it
+
     # df2 = df[df['id'] == '3']
     # Generate HTML tables
     html_table_1 = "<div style='display: inline-block; text-align: left; color:black; margin-top:20px;'>"
@@ -165,11 +170,32 @@ def render_view_report():
             transform: translateX(0);
           }}
         }}
+         @keyframes flashing {{
+          0% {{
+            background-color: #FFD700; /* Golden color */
+            box-shadow: 0 0 20px #FFD700, 0 0 20px #FFD700; /* Golden box shadow */
+          }}
+          50% {{
+            background-color: #f1c232; /* Light golden color */
+            box-shadow: 0 0 20px #FFD700, 0 0 20px #FFD700; /* Light golden box shadow */
+          }}
+          100% {{
+            background-color: #FFD700; /* Golden color */
+            box-shadow: 0 0 20px #FFD700, 0 0 20px #FFD700; /* Golden box shadow */
+            
+          }}
+        }}
+
+        .flashing-effect {{
+          animation: flashing 1s infinite;
+          padding: 10px;
+          border-radius: 20px;
+        }}
       </style>
     </head>
     <body>
       <div class="report" style="background-color: #FFFFD5">
-        <div class="report-header">Call Report View</div>
+        <div class="report-header"><span class='flashing-effect'>{record.iat[0, 1]}<span/></div>
         <div class="report-columns">
           <div class="report-field">
             <span class="field-label">RM Name:</span>
@@ -177,39 +203,39 @@ def render_view_report():
           </div>
           <div class="report-field">
             <span class="field-label">Report Date:</span>
-            <span class="field-value">{record.iat[0, 1]}</span>
-          </div>
-          <div class="report-field">
-            <span class="field-label">From Department:</span>
-            <span class="field-value">{record.iat[0, 2]}</span>
-          </div>
-          <div class="report-field">
-            <span class="field-label">Client Name:</span>
-            <span class="field-value">{record.iat[0, 3]}</span>
-          </div>
-          <div class="report-field">
-            <span class="field-label">Client Type:</span>
             <span class="field-value">{record.iat[0, 4]}</span>
           </div>
           <div class="report-field">
-            <span class="field-label">Referenced By:</span>
+            <span class="field-label">From Department:</span>
             <span class="field-value">{record.iat[0, 5]}</span>
           </div>
           <div class="report-field">
-            <span class="field-label">Call Date/Time:</span>
+            <span class="field-label">Client Name:</span>
             <span class="field-value">{record.iat[0, 6]}</span>
           </div>
           <div class="report-field">
-            <span class="field-label">The Place:</span>
+            <span class="field-label">Client Type:</span>
             <span class="field-value">{record.iat[0, 7]}</span>
+          </div>
+          <div class="report-field">
+            <span class="field-label">Referenced By:</span>
+            <span class="field-value">{record.iat[0, 8]}</span>
+          </div>
+          <div class="report-field">
+            <span class="field-label">Call Date/Time:</span>
+            <span class="field-value">{record.iat[0, 9]}</span>
+          </div>
+          <div class="report-field">
+            <span class="field-label">Place/Venue:</span>
+            <span class="field-value">{record.iat[0, 10]}</span>
           </div>
             <div class="report-field">
               <span class="field-label">Next Call Date:</span>
               <span class="field-value">{record.iat[0, 14]}</span>
             </div>
             <div class="report-field">
-              <span class="field-label"></span>
-              <span class="field-value"></span>
+              <span class="field-label">Manager Remarks</span>
+              <span class="field-value">{record.iat[0, 16]}</span>
             </div>
             <div class="report-field">
               <span class="field-label">Clients List</span>
@@ -222,15 +248,15 @@ def render_view_report():
         </div>
         <div class="report-field">
           <span class="field-label">Call Objective:</span>
-          <span class="field-value">{record.iat[0, 10]}</span>
-        </div>
-        <div class="report-field">
-          <span class="field-label">Points of Discussion:</span>
           <span class="field-value">{record.iat[0, 11]}</span>
         </div>
         <div class="report-field">
-          <span class="field-label">Actionable Items:</span>
+          <span class="field-label">Points of Discussion:</span>
           <span class="field-value">{record.iat[0, 12]}</span>
+        </div>
+        <div class="report-field">
+          <span class="field-label">Actionable Items:</span>
+          <span class="field-value">{record.iat[0, 13]}</span>
         </div>
         <p style="color: black;text-align:center;margin-top:50px;font-weight: bold;">Printed on: {formatted_datetime}</p>
       </div>
@@ -243,16 +269,33 @@ def render_view_report():
     st.markdown(html_markdown2, unsafe_allow_html=True)
 
 
-# only if authorized open the page
-result = is_authorized(render_view_report)
-
-if result is not None:
+# if token was valid
+if is_token_authorized():
     token = get_query_param_by_name('token')
     userId, token_expiry, username = get_user_claims(token)
-    extracted_value = get_query_param_by_name('id')
-    if is_user_manager(userId):
-        components.html(admin_approval_component(extracted_value))
+    report_id = get_query_param_by_name('id')
+    report_data =  view_report_by_id(report_id) #dataframe
+    # if report_data['rm_id'] == userId: #owner
 
+    record = get_report()
 
+    if record.iat[0, 1] == "New" or record.iat[0, 1] == "Returned":
+        print(userId)
+        print(record.iat[0,15])
+        if record.iat[0, 15] == userId:
+            components.html(owner_action_component(report_id))
+        render_view_report()
+    elif record.iat[0, 1] == "Pending Approval":
+        if is_user_manager(userId):
+            components.html(admin_approval_component(report_id))
+        render_view_report()
+    elif record.iat[0, 1] == "Completed" :
+        render_view_report()
+    else:
+        st.markdown(notfound_page("You are not authorized to view this request"), unsafe_allow_html=True)
+
+else:
+    st.markdown("<h3 style='color:yellow'>Expired Url or Invalid Authentication, Login from CBG portal</h3>"
+                "<a href='https://google.com' target='_blank'>Login</a>", unsafe_allow_html=True)
 
 # radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);;border-radius:10px; box-shadow: 0 8px 6px -6px black;

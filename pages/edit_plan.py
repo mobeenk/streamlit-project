@@ -3,7 +3,8 @@ import datetime
 from datetime import date, timedelta
 import streamlit as st
 from DAL.data_access import *
-from common import get_query_param_by_name, is_authorized
+from common import get_query_param_by_name, is_token_authorized
+from navbar import notfound_page
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
@@ -61,4 +62,8 @@ def render_edit_page():
 
 
 # only if authorized open the page
-is_authorized(render_edit_page)
+if is_token_authorized():
+    render_edit_page()
+else:
+    st.markdown(notfound_page("You are not authorized to edit this plan"), unsafe_allow_html=True)
+

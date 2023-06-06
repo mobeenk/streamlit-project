@@ -5,11 +5,15 @@ import pandas as pd
 from utility import  Person
 
 def is_user_manager(userid):
+    #check if loggedin user is owner of request or manager of the owner
+
     return bool(random.getrandbits(1))
 
 
-def get_purpose_options():
-    return ["Purpose 1", "Purpose 2", "Purpose 3"]
+def get_departments():
+    pass
+
+
 
 
 def load_data(file):
@@ -54,12 +58,15 @@ def fetch_client_data(cif):
 
 
 def save_plan():
-    # save into db
-    pass
+    # save info into DB and return the record id
+    record_id = 3
+    return record_id
 
 
 def save_report_plan(reportPlanObject):
-    pass
+    #save info into DB and return the record id
+    record_id = 2
+    return record_id
 
 
 def get_plan_by_id(id):
@@ -127,3 +134,9 @@ def view_plan_by_id(id):
 def view_report_by_id(id):
     df = pd.read_csv("pages/callreports.csv")
     return df
+
+
+def get_manager_info_for_user(user_id):
+    return 412, "Manager Name"
+
+

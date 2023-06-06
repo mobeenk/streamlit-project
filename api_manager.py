@@ -26,6 +26,11 @@ def get_weather_data(lat, lon):
         # Process the API response data
         print(response_data['main']['temp'])
 
+
+def send_email(title, content, url):
+    #call email api to send
+    pass
+
 # Pass latitude and longitude as parameters
 latitude = 13.5460432
 longitude = 2.0783398

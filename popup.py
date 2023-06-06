@@ -1,29 +1,43 @@
-from streamlit_modal import Modal
-import streamlit.components.v1 as components
-import streamlit as st
 
-def popup(title, content):
-    modal = Modal("Demo Modal", key="sdfsdfs")
-    open_modal = st.button("Open")
-    if open_modal:
-        modal.open()
-    if modal.is_open():
-        with modal.container():
-            html_string = f'''
-            <script language="javascript">
-              document.querySelector("div h1").style.color = "red";
-            </script>
-            <style>
-              .color-green {{
-                color: green;
-              }}
-            </style>
-            <div >
-                <h1 class="color-green">{title}</h1>
-                <p>{content}</p>
-            </div>
-            '''
-            components.html(html_string)
-            # value = st.checkbox("Check me")
-            # st.write(f"Checkbox checked: {value}")
 
+def popup_message():
+    popup_html = '''
+        <!DOCTYPE html>
+<html>
+<head>
+
+  <style>
+    .dialog-button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  
+  <button class="dialog-button" onclick="openDialog()">Open Dialog</button>
+
+  <dialog id="myDialog">
+    <h2>Dialog Title</h2>
+    <p>This is the content of the dialog.</p>
+    <button onclick="closeDialog()">Close</button>
+  </dialog>
+
+  <script>
+    function openDialog() {
+      var dialog = document.getElementById("myDialog");
+      dialog.showModal();
+    }
+
+    function closeDialog() {
+      var dialog = document.getElementById("myDialog");
+      dialog.close();
+    }
+  </script>
+</body>
+</html>
+
+
+    '''
+    return popup_html

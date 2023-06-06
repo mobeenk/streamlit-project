@@ -2,14 +2,18 @@ import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
 from components import *
-from common import get_query_param_by_name, is_authorized
+from common import get_query_param_by_name, is_token_authorized
 from DAL.data_access import *
+from navbar import notfound_page
+from popup import popup_message
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 # qid = st.experimental_get_query_params()
 # extracted_value = int(qid['id'][0])
 extracted_value = get_query_param_by_name('id')
 
+
+# components.html(popup_message())
 
 def render_plan():
     df = view_plan_by_id(extracted_value) # pd.read_csv("pages/plans.csv")
@@ -150,4 +154,8 @@ def render_plan():
 
 
 # only if authorized open the page
-is_authorized(render_plan)
+if is_token_authorized():
+    render_plan()
+
+else:
+    st.markdown(notfound_page("You are not authorized to view this request"), unsafe_allow_html=True)

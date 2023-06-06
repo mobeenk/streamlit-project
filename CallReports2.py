@@ -5,8 +5,9 @@ from navbar import *
 from common import *
 from reportingPDF import PDF, objects
 from utility import *
-from popup import *
+import streamlit.components.v1 as components
 from DAL.data_access import *
+from popup import  *
 
 # get token from URL
 token = get_query_param_by_name('token')
@@ -139,7 +140,7 @@ def main():
                                 "referred_by": st.session_state.client_ref,
                                 "client_cr": st.session_state.client_cr,
                                 "client_risk_rating": st.session_state.client_risk_rating,
-                                "status": "New"
+                                "status": "Pending"
                             }
 
                             st.json(json.dumps(data))
@@ -307,13 +308,19 @@ def main():
                                 , str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                                 , "Moubien"
                                 , call_start
-
                                 , next_call
                                 , from_department
                                 , str(report_date)
-
                             )
+                            #submit the request to DB by procedure that returns the new record id
+                            record_id = save_report_plan(json_obj)
+                            manager_id, manager_username = get_manager_info_for_user(userId)
+                            manager_token = generate_jwt_token(manager_id, manager_username)
+                            # and send email
                             st.json(json_obj)
+                            #to send email: generate token for manager
+                            url = f"{BASE_URL}/view_report?token={manager_token}&id={record_id}"
+                            st.write(url)
                             st.session_state.btn_submit_report = True
                     else:
                         st.warning("Already Submitted a report, Refresh the page to submit a new report")
@@ -326,7 +333,7 @@ def main():
             called_list = [person_to_dict(person) for person in calledOnList]
             calling_list = [person_to_dict(person) for person in callingList]
             data = {
-                "rm_id": userId,
+                # "rm_id": userId,
                 "plan_id": plan_id,
                 "the_place": the_place,
                 "called_list": called_list,
@@ -448,6 +455,8 @@ def main():
 if __name__ == '__main__':
     main()
     components.html(page_footer())
+
+
 
     #
     # with col1:

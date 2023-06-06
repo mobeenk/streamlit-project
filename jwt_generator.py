@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta
 
 
-def generate_jwt_token(user_id):
+def generate_jwt_token(user_id, username):
     # should generate token contains loggedin user data (id, username etc ...)
     # Set the expiry date
     expiry_date = datetime.utcnow() + timedelta(days=10)  # Token expires in 1 day
@@ -11,7 +11,7 @@ def generate_jwt_token(user_id):
     payload = {
         'id': user_id,
         'exp': expiry_date,
-        'username': 'Moubien',
+        'username': username,
 
     }
     # Generate the JWT token
@@ -55,7 +55,9 @@ def is_valid_jwt(token, secret_key):
 
     return False
 
-new_token = generate_jwt_token(5)
+
+
+new_token = generate_jwt_token(5, "Moubien")
 print(new_token)
 # print(read_jwt_token(new_token))
 # datetime_obj = datetime.fromtimestamp(read_jwt_token(new_token)[1])

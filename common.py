@@ -101,27 +101,28 @@ from navbar import notfound_page
 from jwt_generator import is_valid_jwt
 
 
-def is_authorized(exce_func):
+def is_token_authorized():
     token = get_query_param_by_name('token')
     # print('my token\n'+token)
     try:
         userId, token_expiry, username = get_user_claims(token)
-        # print(userId)
-        # print(token_expiry)
+        #there must be a condition to check if userID in token matches the person actual id
         if not is_valid_jwt(token, TOKEN_KEY):
-            st.markdown(notfound_page("Unauthorized-401"), unsafe_allow_html=True)
-            print('not valid token')
-            return None
+            # st.markdown(notfound_page("Unauthorized-401"), unsafe_allow_html=True)
+            return False
         elif token_expiry is None:
-            st.markdown(notfound_page("Session Expired"), unsafe_allow_html=True)
-            return None
+            # st.markdown(notfound_page("Session Expired"), unsafe_allow_html=True)
+            return False
         else:
-            exce_func()
-            return 1
+            # exce_func()
+            return True
 
     except Exception as e:
         # Exception handling code
         print("An error occurred:", str(e))
+
+
+
 
 
 
