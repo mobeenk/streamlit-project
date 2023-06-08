@@ -2,25 +2,35 @@ import json
 import random
 import streamlit as st
 import pandas as pd
-from utility import  Person
+from utility import Person
 
+server = "your_server_name"
+database = "your_database_name"
 def is_user_manager(userid):
-    #check if loggedin user is owner of request or manager of the owner
+    # check if loggedin user is owner of request or manager of the owner
 
     return bool(random.getrandbits(1))
 
-def get_plans_by_userid(userid):
-    return ['100', '200', '300']
+
+def get_manager_info_for_user(user_id):
+    return 412, "Manager Name"
+
+
 def get_departments():
     pass
 
 
+def get_plans(user_id):
+    # d = run(""" select * from table whrere  user {rmcode} """)
+    df = pd.read_csv('pages/plans.csv')
+    return df
 
 
-def load_data(file):
-    #d = run(""" select * from table whrere  user {rmcode} """)
-    data1 = pd.read_csv(file)
-    return data1
+# user id is the rm_id registered on the request
+def get_reports(user_id):
+    # d = run(""" select * from table whrere  user {rmcode} """)
+    df = pd.read_csv('pages/callreports.csv')
+    return df
 
 
 def get_rm_clients(rmId):
@@ -29,16 +39,15 @@ def get_rm_clients(rmId):
 
 
 def get_rms_list(userid):
-    # get the list from somewhere
-    # CHOICES = {1: "dataset a", 2: "dataset b", 3: "dataset c"}
-    # selected_rm = st.selectbox("Select option", CHOICES.keys(), format_func = lambda x: CHOICES[x])
-    # st.write(f"You selected option {selected_rm} ")
+    # run(select those rms based on userid)
+    # df = []
+    # rm_list = [{row['ID']: row['Name']} for _, row in df.iterrows()]
     result = [{11: "Ahmad Sammer"}, {22: "Jonny b"}, {33: "Omar c"}]
     return result
 
 
 def fetch_client_data(cif):
-    #fetch the values from DB
+    # fetch the values from DB as df
     cn = st.session_state.client_name = "Ericson Telecom"
     sot = st.session_state.client_SOT = "100000"
     out = st.session_state.client_outstanding = "Some outstanding data fetched"
@@ -52,22 +61,33 @@ def fetch_client_data(cif):
         "Risk Rating": risk_rating
     }
 
-    data2 = [data] #to convert to dataframe
+    data2 = [data]  # to convert to dataframe
     df = pd.DataFrame(data2)
     st.dataframe(df)
+    # fetch the values from DB as df
+    # data = run (select ...)
     return data
 
 
-def save_plan():
-    # save info into DB and return the record id
+def save_plan(data_object):
+    params = list(data_object.values())
+    print(params)
+    # must pass data_light now to save into db
+    # record_id = execute_stored_procedure(server, database, username, password, procedure_name, params=params):
+
     record_id = 3
     return record_id
 
 
-def save_report_plan(reportPlanObject):
-    #save info into DB and return the record id
+def save_report_plan(data_object):
+    params = list(data_object.values())
+    print(params)
     record_id = 2
     return record_id
+
+
+def get_plans_by_userid(userid):
+    return ['100', '200', '300']
 
 
 def get_plan_by_id(id):
@@ -95,18 +115,18 @@ def get_report_by_id(id):
         "referenced_by": "referenced_by",
         "the_place": "the_place",
         "called_list": [
-                            {
-                            "name":"sdsd",
-                            "title":"sd"
-                            }
-                            ,{
-                            "name":"sd",
-                            "title":"sd"
-                            }
-                     , {
-                    "name": "sd",
-                    "title": "sd"
-                }
+            {
+                "name": "sdsd",
+                "title": "sd"
+            }
+            , {
+                "name": "sd",
+                "title": "sd"
+            }
+            , {
+                "name": "sd",
+                "title": "sd"
+            }
         ],
         "calling_list": [
             {
@@ -130,6 +150,8 @@ def get_report_by_id(id):
 
     json_data = json.dumps(data)
     return json_data
+
+
 def getStaffList():
     person_list_1 = [
         Person("John Doe", "Manager"),
@@ -140,6 +162,8 @@ def getStaffList():
         Person("Mike Johnson", "Analyst")
     ]
     return person_list_1
+
+
 def getClientsList():
     person_list_2 = [
         Person("Alice Johnson", "Designer"),
@@ -157,9 +181,3 @@ def view_plan_by_id(id):
 def view_report_by_id(id):
     df = pd.read_csv("pages/callreports.csv")
     return df
-
-
-def get_manager_info_for_user(user_id):
-    return 412, "Manager Name"
-
-

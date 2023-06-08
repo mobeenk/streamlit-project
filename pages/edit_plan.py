@@ -45,7 +45,7 @@ def render_edit_page():
         st.session_state.jsonobj = fetch_client_data(client_cif)
         with st.spinner(text='in progress'):
             time.sleep(1)
-            save_plan()
+
             st.success('Updated a new Call Plan Successfully.')
             data = {
                 "rm_id": "selected_rm_result",
@@ -58,6 +58,9 @@ def render_edit_page():
                 "create_date": record['purpose'],
                 "created_by": record['purpose']
             }
+            save_plan(
+                data
+            )
 
             st.json(json.dumps(data))
 

@@ -1,14 +1,10 @@
 import json
-from pathlib import Path
-import pandas as pd
-from DAL.data_access import get_rm_clients, get_report_by_id, get_plans_by_userid
+from DAL.data_access import  get_report_by_id, get_plans_by_userid
 from common import *
 import streamlit as st
-
 from utility import Person, person_to_dict
 
 general_settings()
-
 staff_list = []
 if 'person_list' not in st.session_state:
     st.session_state.person_list = []
@@ -23,8 +19,9 @@ token = get_query_param_by_name('token')
 userId, token_expiry, username = get_user_claims(token)
 
 st.markdown(f"<h2 style=\"color:{COLOR_DARK_YELLOW};\">"
-            "<i class=\"fas fa-wrench\"></i> Under Construction"
+            f"<i class=\"fas fa-wrench\"></i> Edit Report #{get_query_param_by_name('id')}"
             "</h2>", unsafe_allow_html=True)
+
 
 
 def report_plan_json(
@@ -55,8 +52,6 @@ def report_plan_json(
 
 
 def render_edit_report():
-
-
     extracted_id = get_query_param_by_name('id')
     plan_data = get_report_by_id(extracted_id)
     record = json.loads(plan_data)
@@ -103,8 +98,6 @@ def render_edit_report():
         staff_title3 = ""
         staff_title4 = ""
         staff_title5 = ""
-
-
 
         with col_clients:
             st.markdown("<p>Clients list</p>", unsafe_allow_html=True)
@@ -232,10 +225,10 @@ def render_edit_report():
 
         next_call = str(next_call_date) + " " + str(next_call_time)
 
-        # submit_report =
+        submit_report = st.form_submit_button("Save & Update", disabled=st.session_state.btn_submit_report)
 
-        if st.session_state.btn_submit_report == False:
-            if st.form_submit_button("Save & Update"):  # st.button(label='Save & Submit'):
+        if submit_report:  # st.button(label='Save & Submit'):
+            if not st.session_state.btn_submit_report:
                 clients = [
                     (client_name1, client_title1),
                     (client_name2, client_title2),
@@ -278,12 +271,11 @@ def render_edit_report():
                 )
                 st.json(json_obj)
                 st.session_state.btn_submit_report = True
-        else:
-            st.warning("Already Submitted a report, Refresh the page to submit a new report")
+            else:
+                st.warning("Already Update the Report.")
 
 
 if is_token_authorized():
     render_edit_report()
 else:
     st.markdown(notfound_page("You are not authorized to edit this report "), unsafe_allow_html=True)
-

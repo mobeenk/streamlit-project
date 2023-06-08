@@ -7,7 +7,7 @@ from reportingPDF import PDF, objects
 from utility import *
 import streamlit.components.v1 as components
 from DAL.data_access import *
-from popup import  *
+from popup import *
 
 # get token from URL
 token = get_query_param_by_name('token')
@@ -109,7 +109,7 @@ def main():
 
                 purpose = st.text_input("Purpose", value="Purpose", key='purposethis')
                 plan_date = st.date_input("Plan Date", key="exp_date",
-                                                   min_value=datetime.today())
+                                          min_value=datetime.today())
                 # sot = st.text_input("Enter SOT")
 
                 # submit_button =
@@ -124,8 +124,7 @@ def main():
                             if st.session_state.c_type == "e":
                                 fetch_client_data(client_cif)
                             time.sleep(1)
-                            save_plan()
-                            st.success('Add a new Call Plan Successfully.')
+
 
                             data = {
                                 "rm_id": selected_rm_result,
@@ -142,6 +141,11 @@ def main():
                                 "client_risk_rating": st.session_state.client_risk_rating,
                                 "status": "Pending"
                             }
+                            # saving plan has two parts main data and details(client, staff)
+                            save_plan(
+                                data
+                            )
+                            st.success('Add a new Call Plan Successfully.')
 
                             st.json(json.dumps(data))
                         st.session_state.btn_submit_plan = True
@@ -158,6 +162,7 @@ def main():
             st.session_state.c_type = ""
         if 'btn_submit_report' not in st.session_state:
             st.session_state.btn_submit_report = False
+
         def call_report_page():
             report_date = ""
             from_department = ""
@@ -252,7 +257,8 @@ def main():
 
                     # st.markdown(f"<h3>Agenda Details 📒</h3>", unsafe_allow_html=True)
                     call_objective = st.text_area("Objective of the call", height=100, value="call pbjective")
-                    points_of_discusstion = st.text_area("Points of Discussion", height=100, value="points of discusion")
+                    points_of_discusstion = st.text_area("Points of Discussion", height=100,
+                                                         value="points of discusion")
                     actionable_items = st.text_area("Actionable Items", height=100, value="acional items")
 
                     c1, c2 = st.columns(2)
@@ -262,11 +268,10 @@ def main():
 
                     next_call = str(next_call_date) + " " + str(next_call_time)
 
-                    # submit_report =
+                    submit_report = st.form_submit_button("Save & Submit", disabled=st.session_state.btn_submit_report)
 
-
-                    if st.session_state.btn_submit_report == False:
-                        if st.form_submit_button("Save & Submit"): #st.button(label='Save & Submit'):
+                    if submit_report:
+                        if not st.session_state.btn_submit_report:
                             clients = [
                                 (client_name1, client_title1),
                                 (client_name2, client_title2),
@@ -306,18 +311,18 @@ def main():
                                 , from_department
                                 , str(report_date)
                             )
-                            #submit the request to DB by procedure that returns the new record id
+                            # submit the request to DB by procedure that returns the new record id
                             record_id = save_report_plan(json_obj)
                             manager_id, manager_username = get_manager_info_for_user(userId)
                             manager_token = generate_jwt_token(manager_id, manager_username)
                             # and send email
                             st.json(json_obj)
-                            #to send email: generate token for manager
+                            # to send email: generate token for manager
                             url = f"{BASE_URL}/view_report?token={manager_token}&id={record_id}"
                             st.write(url)
                             st.session_state.btn_submit_report = True
-                    else:
-                        st.warning("Already Submitted a report, Refresh the page to submit a new report")
+                        else:
+                            st.warning("Already Submitted a report, Refresh the page to submit a new report")
 
         def report_plan_json(
                 plan_id, the_place
@@ -379,12 +384,17 @@ def main():
             call_plan_page()
             grid_title = "My Call Plans"
             st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
-            plansGrid(load_data('pages/plans.csv'), cellsytle_jscode)
+            df = get_plans(userId) #
+            plansGrid(df, cellsytle_jscode)
             # st.markdown('<h2 style="color:red;"">Home</h2>', unsafe_allow_html=True)
+
         if navmenu_selected == 'Call Reports':
             call_report_page()
             grid_title = "My Calls Reports"
             st.markdown(f"<h3>{grid_title}</h3>", unsafe_allow_html=True)
+            df = get_reports(userId)
+            callReportGrid(df, cellsytle_jscode)
+
 
             col1, col2 = st.columns(2)
             with col1:
@@ -409,12 +419,13 @@ def main():
             # if all_btn:
             #     df = []
             #     df = load_data('pages/callreports.csv')
-            df = load_data('pages/callreports.csv')
-            callReportGrid(df, cellsytle_jscode)
+
+
+
         if navmenu_selected == 'Reporting':
             st.write('Select RM and the dates for the call reports period')
             selectedRM = ""
-            if st.session_state.is_manager == True:
+            if st.session_state.is_manager:
                 rm_list = get_rms_list(userId)
                 selected_rm = st.selectbox(
                     "Relationship Manager 🙎‍",
@@ -449,8 +460,6 @@ def main():
 if __name__ == '__main__':
     main()
     components.html(page_footer())
-
-
 
     #
     # with col1:
