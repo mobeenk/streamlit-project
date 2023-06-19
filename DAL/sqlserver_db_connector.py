@@ -175,7 +175,7 @@ def execute_insert_procedure_details(server, database, procedure_name, inputs):
 #
 #     INSERT INTO Drinks (DrinkName)
 #     VALUES (@DrinkName);
-#
+#.
 #     SET @NewDrinkID = SCOPE_IDENTITY();
 #   SELECT @NewDrinkID AS NewDrinkID
 # END

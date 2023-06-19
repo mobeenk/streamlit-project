@@ -53,7 +53,7 @@ def report_plan_json(
 
 def render_edit_report():
     extracted_id = get_query_param_by_name('id')
-    plan_data = get_report_by_id(extracted_id)
+    plan_data = get_report_by_id(userId, extracted_id)
     record = json.loads(plan_data)
     print(record['called_list'][0]['title'])
     st.markdown(f"<h3>Client Details</h3>", unsafe_allow_html=True)

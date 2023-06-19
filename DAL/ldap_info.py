@@ -15,7 +15,7 @@ workstation_name = socket.gethostname()
 
 username = getpass.getuser()
 
-ip_address = socket.gethostbyname(socket.gethostname())
+# ip_address = socket.gethostbyname(socket.gethostname())
 print(workstation_name)
 print(username)
 #
